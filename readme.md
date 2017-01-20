@@ -4,7 +4,7 @@
 
 ### Setup local de Laravel
 
-Dépendances: Git, Vagrant, Homestead, Virtualbox, vim
+Dépendances: Git, Vagrant, Homestead, Virtualbox, vim, Php 7.1, composer
 
 Bon, vim n'est pas tant nécessaire, surtout sur Windows. En fait, utilisez l'éditeur de texte que vous voulez. Mais, je le met là parce que je suis un fan!
 
