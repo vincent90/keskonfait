@@ -8,7 +8,7 @@ Dépendances: Git, Vagrant, Homestead, Virtualbox, vim, Php 7.1, composer
 
 Bon, vim n'est pas tant nécessaire, surtout sur Windows. En fait, utilisez l'éditeur de texte que vous voulez. Mais, je le met là parce que je suis un fan!
 
-1. Installer [VitualBox](https://www.virtualbox.org/wiki/Downloads)
+1. Installer [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
 2. Installer [Vagrant](https://www.vagrantup.com/downloads.html) pour votre système d'exploitation.
 Une fois installé, lancer la commande suivante:
@@ -69,3 +69,9 @@ databases:
 ~~~
 
 En gros, ce que ça fait c'est mapper notre code (~/Code dans le fichier ci-dessus) dans la machine virtuelle Vagrant dans le path /home/vagrant. Alors, faite juste changer ~/Code pour le path où vous avez cloner le code dans votre ordi.
+
+Une fois terminé, lancer la machine virutelle avec la commande dans le repo du projet:
+
+~~~
+[/path/to/keskonfait] $ vagrant up
+~~~
