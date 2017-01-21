@@ -75,3 +75,5 @@ Une fois terminé, lancer la machine virutelle avec la commande dans le repo du 
 ~~~
 [/path/to/keskonfait] $ vagrant up
 ~~~
+
+Finalement, ouvrir votre browser préféré et entrer l'url http://192.168.10.10.
