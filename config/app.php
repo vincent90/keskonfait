@@ -228,4 +228,11 @@ return [
 
     ],
 
+    'providers' => array(
+        // ...
+
+        'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // Laravel IDE helper
+
+    ),
+
 ];

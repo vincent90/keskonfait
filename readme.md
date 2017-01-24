@@ -8,7 +8,6 @@ Dépendances: docker, docker-compose, Git, Vagrant, Homestead, Virtualbox, vim
 
 Bon, vim n'est pas tant nécessaire, surtout sur Windows. En fait, utilisez l'éditeur de texte que vous voulez. Mais, je le met là parce que je suis un fan!
 
-
 # Methode Docker
 
 1. Installer docker et docker-compose pour votre système d'exploitation
@@ -28,7 +27,7 @@ $ docker-compose up -d nginx mysql
 # Methode Vagrant
 
 
-1. Installer [VitualBox](https://www.virtualbox.org/wiki/Downloads)
+1. Installer [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
 2. Installer [Vagrant](https://www.vagrantup.com/downloads.html) pour votre système d'exploitation.
 Une fois installé, lancer la commande suivante:
