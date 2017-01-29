@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'Laravel',
+    'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -77,7 +77,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('APP_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -90,7 +90,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => env('APP_LOCALE_FALLBACK', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -228,11 +228,11 @@ return [
 
     ],
 
-    'providers' => array(
-        // ...
-
-        'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // Laravel IDE helper
-
-    ),
+    // 'providers' => array(
+    //     // ...
+    //
+    //     'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // Laravel IDE helper
+    //
+    // ),
 
 ];
