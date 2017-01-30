@@ -6,10 +6,10 @@ use App\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class TaskController extends Controller
-{
-    public function __construct()
-    {
+// TODO clean up in this class....and finish the features....
+class TaskController extends Controller {
+
+    public function __construct() {
         $this->middleware('auth');
     }
 
@@ -18,18 +18,17 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-      // $tasks = Task::orderBy('created_at', 'asc')->get();
-      $tasks = Task::roots()->with('children')->get();
+    public function index() {
+        // $tasks = Task::orderBy('created_at', 'asc')->get();
+        $tasks = Task::roots()->with('children')->get();
 
-    // $node->descendants()->limitDepth(5)->get();
+        // $node->descendants()->limitDepth(5)->get();
 
-      $items = Task::all(['id', 'name']);
-      return view('tasks.index', [
-          'tasks' => $tasks,
-          'items' => $items
-      ]);
+        $items = Task::all(['id', 'name']);
+        return view('tasks.index', [
+            'tasks' => $tasks,
+            'items' => $items
+        ]);
     }
 
     /**
@@ -37,9 +36,8 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create() {
+        throw new NotImplementedException();
     }
 
     /**
@@ -48,16 +46,15 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $validator = Validator::make($request->all(), [
-           'name' => 'required|max:255',
+                    'name' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
             return redirect('/tasks')
-                ->withInput()
-                ->withErrors($validator);
+                            ->withInput()
+                            ->withErrors($validator);
         }
 
         // $selectId = $request->input('item_id');
@@ -81,9 +78,8 @@ class TaskController extends Controller
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function show(Task $task)
-    {
-        //
+    public function show(Task $task) {
+        throw new NotImplementedException();
     }
 
     /**
@@ -92,9 +88,8 @@ class TaskController extends Controller
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function edit(Task $task)
-    {
-        //
+    public function edit(Task $task) {
+        throw new NotImplementedException();
     }
 
     /**
@@ -104,9 +99,8 @@ class TaskController extends Controller
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Task $task)
-    {
-        //
+    public function update(Request $request, Task $task) {
+        throw new NotImplementedException();
     }
 
     /**
@@ -115,9 +109,9 @@ class TaskController extends Controller
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Task $task)
-    {
-      Task::findOrFail($task->id)->delete();
-      return redirect('/tasks');
+    public function destroy(Task $task) {
+        Task::findOrFail($task->id)->delete();
+        return redirect('/tasks');
     }
+
 }

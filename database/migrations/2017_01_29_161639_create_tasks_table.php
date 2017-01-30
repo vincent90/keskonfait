@@ -4,22 +4,25 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTasksTable extends Migration
-{
+class CreateTasksTable extends Migration {
+
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('tasks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('isComplete');
+
+            // if the task is a "root" task, it's nested inside a project
             $table->integer('project_id')->nullable();
 
+            // else, it's nested inside another task :
+            // 
             // These columns are needed for Baum's Nested Set implementation to work.
             // Column names may be changed, but they *must* all exist and be modified
             // in the model.
@@ -39,8 +42,8 @@ class CreateTasksTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('tasks');
     }
+
 }

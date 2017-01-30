@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Project;
+use App\Exceptions\NotImplementedException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class ProjectController extends Controller
-{
-    public function __construct()
-    {
+class ProjectController extends Controller {
+
+    public function __construct() {
         $this->middleware('auth');
     }
 
@@ -18,13 +19,13 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-      $projects = Project::orderBy('created_at', 'asc')->get();
+    public function index() {
+        $userId = Auth::id();
+        $projects = Project::getForUser($userId);
 
-      return view('projects.index', [
-          'projects' => $projects
-      ]);
+        return view('projects.index', [
+            'projects' => $projects
+        ]);
     }
 
     /**
@@ -32,9 +33,8 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create() {
+        throw new NotImplementedException();
     }
 
     /**
@@ -43,26 +43,26 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255',
+                    'name' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
             return redirect('/projects')
-                ->withInput()
-                ->withErrors($validator);
+                            ->withInput()
+                            ->withErrors($validator);
         }
 
         $projects = new Project;
+        $projects->user_id = Auth::id();
         $projects->name = $request->name;
         if ($request->start_date != null) {
-          $projects->start_date = $request->start_date;
+            $projects->start_date = $request->start_date;
         }
-          if ($request->end_date != null) {
-              $projects->end_date = $request->end_date;
-          }
+        if ($request->end_date != null) {
+            $projects->end_date = $request->end_date;
+        }
         $projects->save();
 
         return redirect('/projects');
@@ -74,13 +74,12 @@ class ProjectController extends Controller
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function show(Project $project)
-    {
-      $project = Project::findOrFail($project->id);
+    public function show(Project $project) {
+        $project = Project::findOrFail($project->id);
 
-      return view('projects.show', [
-          'project' => $project
-      ]);
+        return view('projects.show', [
+            'project' => $project
+        ]);
     }
 
     /**
@@ -89,9 +88,12 @@ class ProjectController extends Controller
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function edit(Project $project)
-    {
-        //
+    public function edit(Project $project) {
+        $project = Project::findOrFail($project->id);
+
+        return view('projects.edit', [
+            'project' => $project
+        ]);
     }
 
     /**
@@ -101,9 +103,29 @@ class ProjectController extends Controller
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project)
-    {
-        //
+    public function update(Request $request, Project $project) {
+        //$project = Project::findOrFail($project->id);
+
+        $validator = Validator::make($request->all(), [
+                    'name' => 'required|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('/projects/' + $project->id + '/edit')
+                            ->withInput()
+                            ->withErrors($validator);
+        }
+
+        $projects->name = $request->name;
+        if ($request->start_date != null) {
+            $projects->start_date = $request->start_date;
+        }
+        if ($request->end_date != null) {
+            $projects->end_date = $request->end_date;
+        }
+        $projects->save();
+
+        return redirect('/projects');
     }
 
     /**
@@ -112,9 +134,9 @@ class ProjectController extends Controller
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Project $project)
-    {
-      Project::findOrFail($project->id)->delete();
-      return redirect('/projects');
+    public function destroy(Project $project) {
+        Project::findOrFail($project->id)->delete();
+        return redirect('/projects');
     }
+
 }

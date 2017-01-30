@@ -108,3 +108,4 @@ storage/*.key
 .rocketeer/
 
 # End of https://www.gitignore.io/api/phpstorm,intellij,laravel
+/nbproject/private/
