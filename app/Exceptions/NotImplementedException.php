@@ -5,7 +5,7 @@ namespace App\Exceptions;
 class NotImplementedException extends Exception {
 
     /**
-     * For unimplemented methods
+     * For unimplemented methods.
      *
      * @param type $message message to display
      */

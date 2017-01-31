@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProject;
+use App\Http\Requests\StoreTask;
 use App\Project;
 use App\Task;
 use App\Exceptions\NotImplementedException;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 class ProjectController extends Controller {
 
     public function __construct() {
+        // Only authenticated users can access these methods.
         $this->middleware('auth');
     }
 
@@ -21,8 +24,7 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $userId = Auth::id();
-        $projects = Project::getForUser($userId);
+        $projects = Project::findAllForAuthenticatedManager();
 
         return view('projects.index', [
             'projects' => $projects
@@ -43,9 +45,7 @@ class ProjectController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function createTask($id) {
-        $project = Project::findOrFail($id);
-
+    public function createTask(Project $project) {
         return view('projects.create_task', [
             'project' => $project,
         ]);
@@ -56,25 +56,26 @@ class ProjectController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function storeTask(Request $request, $id) {
-        $validator = Validator::make($request->all(), [
-                    'name' => 'required|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('/projects/' . $id . '/create_task')
-                            ->withInput()
-                            ->withErrors($validator);
-        }
-
-        $userId = Auth::id();
-        $project = Project::findOrFail($id);
-
-        if ($project->user_id != $userId) {
+    public function storeTask(StoreTask $request, Project $project) {
+        // Only the project manager can add root tasks.
+        if ($project->project_manager_id != Auth::id()) {
             App::abort(403, 'Access denied');
         }
 
-        $task = Task::create(['project_id' => $id, 'name' => $request->name, 'description' => $request->description, 'isComplete' => false]);
+        $task = Task::create([
+                    'name' => $request->name,
+                    'description' => $request->description,
+                    'status' => $request->status,
+                    'project_id' => $project->id,
+        ]);
+
+        if ($task->start_at != null) {
+            $task->start_at = $request->start_at;
+        }
+        if ($task->end_at != null) {
+            $task->end_at = $request->end_at;
+        }
+        $task->save();
 
         return redirect('/projects/' . $project->id);
     }
@@ -85,26 +86,17 @@ class ProjectController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
-        $validator = Validator::make($request->all(), [
-                    'name' => 'required|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('/projects')
-                            ->withInput()
-                            ->withErrors($validator);
-        }
-
+    public function store(StoreProject $request) {
         $projects = new Project;
-        $projects->user_id = Auth::id();
         $projects->name = $request->name;
-        if ($request->start_date != null) {
-            $projects->start_date = $request->start_date;
+        $projects->description = $request->description;
+        if ($request->start_at != null) {
+            $projects->start_at = $request->start_at;
         }
-        if ($request->end_date != null) {
-            $projects->end_date = $request->end_date;
+        if ($request->end_at != null) {
+            $projects->end_at = $request->end_at;
         }
+        $projects->project_manager_id = Auth::id();
         $projects->save();
 
         return redirect('/projects');
@@ -117,7 +109,6 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show(Project $project) {
-        $project = Project::findOrFail($project->id);
         $tasks = Task::roots()->where('project_id', '=', $project->id)->with('children')->get();
 
         return view('projects.show', [
@@ -133,8 +124,6 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Project $project) {
-        $project = Project::findOrFail($project->id);
-
         return view('projects.edit', [
             'project' => $project
         ]);
@@ -147,25 +136,22 @@ class ProjectController extends Controller {
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project) {
-        $validator = Validator::make($request->all(), [
-                    'name' => 'required|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('projects/' . $project->id . '/edit')
-                            ->withInput()
-                            ->withErrors($validator);
+    public function update(StoreProject $request, Project $project) {
+        if (!$project->canUpdate()) {
+            abort(403, 'Access denied.');
         }
 
-        $project->name = $request->name;
-        if ($request->start_date != null) {
-            $project->start_date = $request->start_date;
+        $projects = Project::findOrFail($project->id);
+        $projects->name = $request->name;
+        $projects->description = $request->description;
+        if ($request->start_at != null) {
+            $projects->start_at = $request->start_at;
         }
-        if ($request->end_date != null) {
-            $project->end_date = $request->end_date;
+        if ($request->end_at != null) {
+            $projects->end_at = $request->end_at;
         }
-        $project->save();
+        $projects->project_manager_id = Auth::id();
+        $projects->save();
 
         return redirect('/projects');
     }
@@ -177,6 +163,10 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy(Project $project) {
+        if (!$project->canDelete()) {
+            abort(403, 'Access denied.');
+        }
+
         Project::findOrFail($project->id)->delete();
         return redirect('/projects');
     }

@@ -14,15 +14,21 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="start_date" class="col-sm-3 control-label">Start date</label>
+            <label for="description" class="col-sm-3 control-label">Description:</label>
             <div class="col-sm-6">
-                <input type="text" name="start_date" id="start_date" class="form-control">
+                <textarea class="form-control" rows="3" name="description" id="description"></textarea>
             </div>
         </div>
         <div class="form-group">
-            <label for="end_date" class="col-sm-3 control-label">End date</label>
+            <label for="start_at" class="col-sm-3 control-label">Start at</label>
             <div class="col-sm-6">
-                <input type="text" name="end_date" id="end_date" class="form-control">
+                <input type="text" name="start_at" id="start_at" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="end_at" class="col-sm-3 control-label">End at</label>
+            <div class="col-sm-6">
+                <input type="text" name="end_at" id="end_at" class="form-control">
             </div>
         </div>
         <div class="form-group">
@@ -46,8 +52,8 @@
             <table class="table table-striped task-table">
                 <thead>
                 <th>Project name</th>
-                <th>Start date</th>
-                <th>End date</th>
+                <th>Start at</th>
+                <th>End at</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
@@ -61,27 +67,29 @@
                             </div>
                         </td>
                         <td class="table-text">
-                            <div>{{ $project->start_date }}</div>
+                            <div>{{ $project->start_at }}</div>
                         </td>
                         <td class="table-text">
-                            <div>{{ $project->end_date }}</div>
+                            <div>{{ $project->end_at }}</div>
                         </td>
                         <td>
                             <form action="/projects/{{ $project->id }}/edit" method="GET">
-                                <button type="submit" class="btn btn-default">Edit project</button>
+                                <button type="submit" class="btn btn-default">Edit</button>
                             </form>
                         </td>
                         <td>
                             <form action="/projects/{{ $project->id }}" method="POST">
                                 {{ csrf_field() }}
                                 {{ method_field('DELETE') }}
-                                <button type="submit" class="btn btn-danger">Delete project</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </td>
                         <td class="table-text">
-                            <div>
-                                <a href="{{ route('project.create_task', ['id' => $project->id]) }}">+ Task</a>
-                            </div>
+                            <form action="{{ route('project.create_task', ['id' => $project->id]) }}" method="GET">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-plus"></i>New task
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach

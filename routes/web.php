@@ -1,7 +1,6 @@
 <?php
 
 use App\Task;
-use Illuminate\Http\Request;
 
 /*
   |--------------------------------------------------------------------------
@@ -22,7 +21,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
-Route::get('projects/{id}/create_task', 'ProjectController@createTask')->name('project.create_task');
-Route::post('projects/{id}/create_task', 'ProjectController@storeTask')->name('project.store_task');
+Route::get('projects/{project}/create_task', 'ProjectController@createTask')->name('project.create_task');
+Route::post('projects/{project}/create_task', 'ProjectController@storeTask')->name('project.store_task');
 Route::resource('projects', 'ProjectController');
+
 Route::resource('tasks', 'TaskController');

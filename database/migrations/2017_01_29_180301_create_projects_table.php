@@ -14,10 +14,17 @@ class CreateProjectsTable extends Migration {
     public function up() {
         Schema::create('projects', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->index();
+
             $table->string('name');
-            $table->dateTime('start_date')->nullable();
-            $table->dateTime('end_date')->nullable();
+            $table->text('description')->nullable();
+            $table->dateTime('start_at')->nullable();
+            $table->dateTime('end_at')->nullable();
+
+            $table->integer('project_manager_id')->unsigned();
+            $table->foreign('project_manager_id')
+                    ->references('id')->on('users')
+                    ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

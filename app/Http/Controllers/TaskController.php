@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Task;
+use App\Http\Requests\StoreTask;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
-// TODO clean up in this class....and finish the features....
 class TaskController extends Controller {
 
     public function __construct() {
+        // Only authenticated users can access these methods.
         $this->middleware('auth');
     }
 
@@ -19,16 +19,7 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        // $tasks = Task::orderBy('created_at', 'asc')->get();
-        $tasks = Task::roots()->with('children')->get();
-
-        // $node->descendants()->limitDepth(5)->get();
-
-        $items = Task::all(['id', 'name']);
-        return view('tasks.index', [
-            'tasks' => $tasks,
-            'items' => $items
-        ]);
+        throw new NotImplementedException();
     }
 
     /**
@@ -46,30 +37,8 @@ class TaskController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
-        $validator = Validator::make($request->all(), [
-                    'name' => 'required|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('/tasks')
-                            ->withInput()
-                            ->withErrors($validator);
-        }
-
-        // $selectId = $request->input('item_id');
-        // $parentTask = Task::findOrFail(2);
-        //
-        // $task = $parentTask->children()->create(['name' => $request->name, 'description' => $request->description, 'isComplete' => false]);
-
-        $task = Task::create(['name' => $request->name, 'description' => $request->description, 'isComplete' => false]);
-        // $task->parent_id = null;
-        // $task->name = $request->name;
-        // $task->description = $request->description;
-        // $task->isComplete = false;
-        // $task->save();
-
-        return redirect('/tasks');
+    public function store(StoreTask $request) {
+        throw new NotImplementedException();
     }
 
     /**
@@ -111,7 +80,7 @@ class TaskController extends Controller {
      */
     public function destroy(Task $task) {
         Task::findOrFail($task->id)->delete();
-        return redirect('/tasks');
+        return redirect('/projects');
     }
 
 }

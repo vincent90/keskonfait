@@ -8,9 +8,9 @@
         {{ csrf_field() }}
 
         <div class="form-group">
-            <label for="name" class="col-sm-3 control-label">Task for project</label>
+            <label for="project_name" class="col-sm-3 control-label">Task for</label>
             <div class="col-sm-6">
-                <input type="text" name="name" id="name" class="form-control" disabled="true" value="{{$project->name}}">
+                <input type="text" name="project_name" id="project_name" class="form-control" disabled="true" value="{{$project->name}}">
             </div>
         </div>
         <div class="form-group">
@@ -23,6 +23,27 @@
             <label for="description" class="col-sm-3 control-label">Description</label>
             <div class="col-sm-6">
                 <input type="text" name="description" id="description" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="start_at" class="col-sm-3 control-label">Start at</label>
+            <div class="col-sm-6">
+                <input type="text" name="start_at" id="start_at" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="end_at" class="col-sm-3 control-label">End at</label>
+            <div class="col-sm-6">
+                <input type="text" name="end_at" id="end_at" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="status" class="col-sm-3 control-label">Status</label>
+            <div class="col-sm-6">
+                <select class="form-control" name="status" id="status">
+                    <option selected="">Open</option>
+                    <option>Closed</option>
+                </select>
             </div>
         </div>
 

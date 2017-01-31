@@ -4,7 +4,7 @@
 <div class="row col-sm-offset-3 col-sm-6">
     <div class="panel panel-default">
         <div class="panel-heading">
-            {{ $project->name }}
+            <b>{{ $project->name }}</b> - {{ $project->description }}
         </div>
 
         <div class="panel-body">
@@ -12,7 +12,9 @@
                 <thead>
                 <th>Task name</th>
                 <th>Description</th>
-                <th>Done</th>
+                <th>Start at</th>
+                <th>End at</th>
+                <th>Status</th>
                 <th>&nbsp;</th>
                 </thead>
                 <tbody>
@@ -26,19 +28,19 @@
                             <div>{{ $task->description }}</div>
                         </td>
                         <td class="table-text">
-                            <div>
-                                @if ($task->isComplete)
-                                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                                @else
-                                <!-- TODO mettre un bouton ou checkmark ou qqch du genre... -->
-                                @endif
-                            </div>
+                            <div>{{ $task->start_at }}</div>
+                        </td>
+                        <td class="table-text">
+                            <div>{{ $task->end_at }}</div>
+                        </td>
+                        <td class="table-text">
+                            <div>{{ $task->status }}</div>
                         </td>
                         <td>
                             <form action="/tasks/{{ $task->id }}" method="POST">
                                 {{ csrf_field() }}
                                 {{ method_field('DELETE') }}
-                                <button type="submit" class="btn btn-danger">Delete Task</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -47,6 +49,14 @@
             </table>
         </div>
     </div>
+    <button type="button" id="bo-back-btn" class="btn btn-default">
+        <i class="fa fa-plus"></i> Back
+    </button>
 </div>
 
+<script>
+    document.getElementById("bo-back-btn").onclick = function () {
+        window.history.back();
+    };
+</script>
 @endsection

@@ -16,13 +16,19 @@ class CreateTasksTable extends Migration {
             $table->increments('id');
             $table->string('name');
             $table->text('description')->nullable();
-            $table->boolean('isComplete');
+            $table->dateTime('start_at')->nullable();
+            $table->dateTime('end_at')->nullable();
+            $table->enum('status', ['Open', 'Closed']);
 
-            // if the task is a "root" task, it's nested inside a project
-            $table->integer('project_id')->nullable();
+            // if's a root task, it's nested inside a project
+            $table->integer('project_id')->unsigned();
+            $table->foreign('project_id')
+                    ->references('id')->on('projects')
+                    ->onDelete('cascade')
+                    ->nullable();
 
             // else, it's nested inside another task :
-            // 
+            //
             // These columns are needed for Baum's Nested Set implementation to work.
             // Column names may be changed, but they *must* all exist and be modified
             // in the model.
