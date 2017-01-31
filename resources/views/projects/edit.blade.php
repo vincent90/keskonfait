@@ -4,7 +4,7 @@
 <div class="panel-body">
     @include('errors.common.errors')
 
-    <form action="/projects" method="PUT" class="form-horizontal">
+    <form action="/projects/{{$project->id}}" method="POST" class="form-horizontal">
         {{ csrf_field() }}
         {{ method_field('PUT') }}
 

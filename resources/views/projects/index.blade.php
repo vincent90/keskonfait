@@ -50,6 +50,7 @@
                 <th>End date</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
+                <th>&nbsp;</th>
                 </thead>
                 <tbody>
                     @foreach ($projects as $project)
@@ -77,6 +78,11 @@
                                 <button type="submit" class="btn btn-danger">Delete project</button>
                             </form>
                         </td>
+                        <td class="table-text">
+                            <div>
+                                <a href="{{ route('project.create_task', ['id' => $project->id]) }}">+ Task</a>
+                            </div>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -85,4 +91,5 @@
     </div>
 </div>
 @endif
+
 @endsection

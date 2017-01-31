@@ -110,3 +110,5 @@ storage/*.key
 # End of https://www.gitignore.io/api/phpstorm,intellij,laravel
 
 nbproject/
+
+*.log
