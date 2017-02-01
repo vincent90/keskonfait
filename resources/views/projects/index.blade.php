@@ -32,6 +32,22 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="users[]" class="col-sm-3 control-label">Users</label>
+            <div class="col-sm-6">
+                <select multiple class="form-control" name="users[]" id="users[]">
+                    @if ($users->count() > 0)
+                    <ul>
+                        @foreach($users as $user)
+                        <option value="{{$user->id}}">{{$user->name}}</option>
+                        @endforeach
+                    </ul>
+                    @endif
+                </select>
+            </div>
+            <p class="help-block">Select multiple users with the CTRL and Shift keys</p>
+        </div>
+
+        <div class="form-group">
             <div class="col-sm-offset-3 col-sm-6">
                 <button type="submit" class="btn btn-default">
                     <i class="fa fa-plus"></i> Add project

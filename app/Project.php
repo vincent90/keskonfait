@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\User;
 
 class Project extends Model {
 
@@ -39,6 +40,15 @@ class Project extends Model {
      */
     public function canDelete() {
         return $this->canUpdate();
+    }
+
+    public function users() {
+        return $this->belongsToMany('App\User')
+                        ->withTimestamps();
+    }
+
+    public function manager() {
+        return User::find($this->project_manager_id);
     }
 
 }

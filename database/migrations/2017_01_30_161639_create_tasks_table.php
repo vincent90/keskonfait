@@ -21,11 +21,9 @@ class CreateTasksTable extends Migration {
             $table->enum('status', ['Open', 'Closed']);
 
             // if's a root task, it's nested inside a project
-            $table->integer('project_id')->unsigned();
-            $table->foreign('project_id')
-                    ->references('id')->on('projects')
-                    ->onDelete('cascade')
-                    ->nullable();
+            $table->integer('project_id')->unsigned()->nullable();
+            $table->foreign('project_id')->references('id')
+                    ->on('projects')->onDelete('cascade');
 
             // else, it's nested inside another task :
             //

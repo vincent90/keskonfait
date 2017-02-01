@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProject;
 use App\Http\Requests\StoreTask;
+use App\Exceptions\NotImplementedException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 use App\Project;
 use App\Task;
-use App\Exceptions\NotImplementedException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use App\User;
 
 class ProjectController extends Controller {
 
@@ -26,8 +26,10 @@ class ProjectController extends Controller {
     public function index() {
         $projects = Project::findAllForAuthenticatedManager();
 
+        $users = User::all();
         return view('projects.index', [
-            'projects' => $projects
+            'projects' => $projects,
+            'users' => $users,
         ]);
     }
 
@@ -98,6 +100,10 @@ class ProjectController extends Controller {
         }
         $projects->project_manager_id = Auth::id();
         $projects->save();
+
+        if (Input::get('users') != null) {
+            $projects->users()->sync(Input::get('users'));
+        }
 
         return redirect('/projects');
     }

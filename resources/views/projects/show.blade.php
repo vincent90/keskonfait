@@ -8,6 +8,17 @@
         </div>
 
         <div class="panel-body">
+            <h4>Project manager : <b>{{ $project->manager()->name }}</b></h4>
+
+            <h4>Project manager's little bitches :</h4>
+            @if ($project->users->count() > 0)
+            <ul>
+                @foreach($project->users as $user)
+                <li>{{$user->name}}</li>
+                @endforeach
+            </ul>
+            @endif
+
             <table class="table table-striped task-table">
                 <thead>
                 <th>Task name</th>
