@@ -55,6 +55,7 @@ echo json_encode([
                             <li><a href="{{ url('/login') }}">Login</a></li>
                             <li><a href="{{ url('/register') }}">Register</a></li>
                             @else
+                            <li><a href="{{ url('/tasks') }}">My Tasks</a></li>
                             <li><a href="{{ url('/projects') }}">My projects</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -81,7 +82,9 @@ echo json_encode([
                 </div>
             </nav>
 
-            @yield('content')
+            <div class="container-fluid">
+                @yield('content')
+            </div>
         </div>
 
         <!-- Scripts -->

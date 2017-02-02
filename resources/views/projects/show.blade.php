@@ -1,73 +1,70 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row col-sm-offset-3 col-sm-6">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <b>{{ $project->name }}</b> - {{ $project->description }}
-        </div>
+<div class="row">
+    <div class="col-sm-offset-2 col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading"><b>{{ $project->name }}</b> @if ($project->description != null) - {{ $project->description }}@endif</div>
+            <div class="panel-body">
+                <h4>Project manager : <b>{{ $project->manager()->name }}</b></h4>
 
-        <div class="panel-body">
-            <h4>Project manager : <b>{{ $project->manager()->name }}</b></h4>
-
-            <h4>Project manager's little bitches :</h4>
-            @if ($project->users->count() > 0)
-            <ul>
-                @foreach($project->users as $user)
-                <li>{{$user->name}}</li>
-                @endforeach
-            </ul>
-            @endif
-
-            <table class="table table-striped task-table">
-                <thead>
-                <th>Task name</th>
-                <th>Description</th>
-                <th>Start at</th>
-                <th>End at</th>
-                <th>Status</th>
-                <th>&nbsp;</th>
-                </thead>
-                <tbody>
-                    @foreach ($tasks as $task)
-                    <tr>
-                        <!-- Task Name -->
-                        <td class="table-text">
-                            <div>{{ $task->name }}</div>
-                        </td>
-                        <td class="table-text">
-                            <div>{{ $task->description }}</div>
-                        </td>
-                        <td class="table-text">
-                            <div>{{ $task->start_at }}</div>
-                        </td>
-                        <td class="table-text">
-                            <div>{{ $task->end_at }}</div>
-                        </td>
-                        <td class="table-text">
-                            <div>{{ $task->status }}</div>
-                        </td>
-                        <td>
-                            <form action="/tasks/{{ $task->id }}" method="POST">
-                                {{ csrf_field() }}
-                                {{ method_field('DELETE') }}
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
+                <h4>Users in this project :</h4>
+                @if ($project->users->count() > 0)
+                <ul>
+                    @foreach($project->users as $user)
+                    <li>{{$user->name}}</li>
                     @endforeach
-                </tbody>
-            </table>
+                </ul>
+                @endif
+
+                <table class="table table-striped">
+                    <thead>
+                    <th>Task name</th>
+                    <th>Start at</th>
+                    <th>End at</th>
+                    <th>Assigned to</th>
+                    <th>Status</th>
+                    <th>&nbsp;</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($tasks as $task)
+                        <tr>
+                            <td>
+                                {{ $task->name }}
+                            </td>
+                            <td>
+                                {{ $task->start_at }}
+                            </td>
+                            <td>
+                                {{ $task->end_at }}
+                            </td>
+                            <td>
+                                {{ $task->assignedTo()->name }}
+                            </td>
+                            <td>
+                                {{ $task->status }}
+                            </td>
+                            <td>
+                                <form action="/tasks/{{ $task->id }}" method="POST">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                    <button type="button" class="btn btn-danger" onclick="beforeDelete(this.parentElement, '{{ $task->name }}');">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <button type="button" id="bo-back-btn" class="btn btn-default">
-        <i class="fa fa-plus"></i> Back
-    </button>
 </div>
 
 <script>
-    document.getElementById("bo-back-btn").onclick = function () {
-        window.history.back();
-    };
+    beforeDelete = function (form, taskName) {
+    if (confirm("Are you sure you want to delete the task : " + taskName + " ?")) {
+    form.submit();
+    }
+    }
 </script>
 @endsection

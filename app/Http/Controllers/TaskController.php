@@ -19,7 +19,11 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        throw new NotImplementedException();
+        $tasks = Task::findAllForAuthenticatedUser();
+
+        return view('tasks.index', [
+            'tasks' => $tasks,
+        ]);
     }
 
     /**

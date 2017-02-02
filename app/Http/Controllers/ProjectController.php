@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotImplementedException;
 use App\Http\Requests\StoreProject;
 use App\Http\Requests\StoreTask;
-use App\Exceptions\NotImplementedException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use App\Project;
@@ -25,8 +25,8 @@ class ProjectController extends Controller {
      */
     public function index() {
         $projects = Project::findAllForAuthenticatedManager();
+        $users = User::all()->except(Auth::id());
 
-        $users = User::all();
         return view('projects.index', [
             'projects' => $projects,
             'users' => $users,
@@ -68,6 +68,7 @@ class ProjectController extends Controller {
                     'name' => $request->name,
                     'description' => $request->description,
                     'status' => $request->status,
+                    'assigned_to_user_id' => $request->assigned_to_user_id,
                     'project_id' => $project->id,
         ]);
 
@@ -77,6 +78,7 @@ class ProjectController extends Controller {
         if ($task->end_at != null) {
             $task->end_at = $request->end_at;
         }
+
         $task->save();
 
         return redirect('/projects/' . $project->id);
@@ -130,8 +132,22 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Project $project) {
+        $users = User::all()->except(Auth::id());
+        $usersInProject = $project->users;
+
+        // get only the user(s) already in the project
+        foreach ($users as &$user) {
+            $user->selected = false;
+            foreach ($usersInProject as &$userInProject) {
+                if ($user->id == $userInProject->id) {
+                    $user->selected = true;
+                }
+            }
+        }
+
         return view('projects.edit', [
-            'project' => $project
+            'project' => $project,
+            'users' => $users,
         ]);
     }
 
@@ -158,6 +174,10 @@ class ProjectController extends Controller {
         }
         $projects->project_manager_id = Auth::id();
         $projects->save();
+
+        if (Input::get('users') != null) {
+            $projects->users()->sync(Input::get('users'));
+        }
 
         return redirect('/projects');
     }

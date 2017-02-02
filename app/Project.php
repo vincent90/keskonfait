@@ -10,9 +10,8 @@ use App\User;
 class Project extends Model {
 
     /**
-     * Retrieves all projects of the specified manager.
+     * Retrieve all projects of the authenticated user.
      *
-     * @param type $managerId
      * @return type
      */
     public static function findAllForAuthenticatedManager() {
@@ -34,7 +33,8 @@ class Project extends Model {
     }
 
     /**
-     * Return true if the authenticated user is the manager of the project. It's assumed that if the user can update a project, he can also delete it.
+     * Return true if the authenticated user is the manager of the project.
+     * It's assumed that if the user can update a project, he can also delete it.
      *
      * @return type
      */
@@ -42,13 +42,23 @@ class Project extends Model {
         return $this->canUpdate();
     }
 
+    /**
+     * Get the list of users for the project.
+     *
+     * @return type
+     */
     public function users() {
         return $this->belongsToMany('App\User')
                         ->withTimestamps();
     }
 
+    /**
+     * Get the owner of the project.
+     *
+     * @return type
+     */
     public function manager() {
-        return User::find($this->project_manager_id);
+        return User::findOrFail($this->project_manager_id);
     }
 
 }

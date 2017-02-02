@@ -20,6 +20,7 @@ class CreateProjectsTable extends Migration {
             $table->dateTime('start_at')->nullable();
             $table->dateTime('end_at')->nullable();
 
+            // the project manager owns the project
             $table->integer('project_manager_id')->unsigned();
             $table->foreign('project_manager_id')
                     ->references('id')->on('users')

@@ -1,6 +1,6 @@
 @if (count($errors) > 0)
 <div class="alert alert-danger">
-    <strong>Wow....that was a very simple task....how did you manage to fuck it up....?</strong>
+    <strong>Oops! You have to fix this...</strong>
     <br><br>
 
     <ul>

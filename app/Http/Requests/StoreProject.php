@@ -25,6 +25,7 @@ class StoreProject extends FormRequest {
             'name' => 'required|max:255',
             'start_at' => 'date|date_format:Y-m-d',
             'end_at' => 'date|date_format:Y-m-d|after:start_at',
+            'project_manager_id' => 'exists:users,id',
         ];
     }
 

@@ -25,7 +25,9 @@ class StoreTask extends FormRequest {
             'name' => 'required|max:255',
             'start_at' => 'date|date_format:Y-m-d',
             'end_at' => 'date|date_format:Y-m-d|after:start_at',
+            'assigned_to_user_id' => 'required|exists:users,id',
             'status' => 'in:Open,Closed',
+            'project_id' => 'exists:projects,id',
         ];
     }
 
