@@ -61,6 +61,15 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                <h4>Revision History</h4>
+                @foreach($project->revisionHistory as $history)
+                @if($history->key == 'created_at' && !$history->old_value)
+                <li>{{ $history->userResponsible()->name }} created this resource at {{ $history->newValue() }}</li>
+                @else
+                <li>{{ $history->userResponsible()->name }} changed {{ $history->fieldName() }} from {{ $history->oldValue() }} to {{ $history->newValue() }} at {{ $history->created_at}}</li>
+                @endif
+                @endforeach
             </div>
         </div>
     </div>

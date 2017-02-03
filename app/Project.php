@@ -9,6 +9,14 @@ use App\User;
 
 class Project extends Model {
 
+    protected $revisionCreationsEnabled = true;
+
+    use \Venturecraft\Revisionable\RevisionableTrait;
+
+    public static function boot() {
+        parent::boot();
+    }
+
     /**
      * Retrieve all projects of the authenticated user.
      *
