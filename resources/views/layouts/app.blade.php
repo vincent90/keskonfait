@@ -12,6 +12,7 @@
 
         <!-- Styles -->
         <link href="/css/app.css" rel="stylesheet">
+        <link href="/css/bootstrap-datepicker/bootstrap-datepicker3.standalone.css" rel="stylesheet">
 
         <!-- Scripts -->
         <script>
@@ -89,5 +90,12 @@ echo json_encode([
 
         <!-- Scripts -->
         <script src="/js/app.js"></script>
+        <script src="/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
+        <script>
+                                               $(document).ready(function () {
+                                                   $('.datepicker').datepicker({autoclose: true});
+                                               });
+        </script>
     </body>
 </html>

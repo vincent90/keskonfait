@@ -28,14 +28,14 @@
                     <div class="form-group">
                         <label for="start_at" class="col-sm-3 control-label">Start at</label>
                         <div class="col-sm-6">
-                            <input type="text" name="start_at" id="start_at" class="form-control" @if($project->start_at)value="{{ Carbon\Carbon::parse($project->start_at)->format('Y-m-d') }}"@endif>
+                            <input type="text" name="start_at" id="start_at" class="form-control datepicker" data-date-format="yyyy-mm-dd" @if($project->start_at)value="{{ Carbon\Carbon::parse($project->start_at)->format('Y-m-d') }}"@endif>
                         </div>
                         <p class="help-block">Format must be : YYYY-MM-DD</p>
                     </div>
                     <div class="form-group">
                         <label for="end_at" class="col-sm-3 control-label">End at</label>
                         <div class="col-sm-6">
-                            <input type="text" name="end_at" id="end_at" class="form-control" @if($project->end_at)value="{{ Carbon\Carbon::parse($project->end_at)->format('Y-m-d') }}"@endif>
+                            <input type="text" name="end_at" id="end_at" class="form-control datepicker" data-date-format="yyyy-mm-dd" @if($project->end_at)value="{{ Carbon\Carbon::parse($project->end_at)->format('Y-m-d') }}"@endif>
                         </div>
                         <p class="help-block">Format must be : YYYY-MM-DD</p>
                     </div>

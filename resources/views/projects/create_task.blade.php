@@ -33,14 +33,14 @@
                     <div class="form-group">
                         <label for="start_at" class="col-sm-3 control-label">Start at</label>
                         <div class="col-sm-6">
-                            <input type="text" name="start_at" id="start_at" class="form-control">
+                            <input type="text" name="start_at" id="start_at" class="form-control datepicker" data-date-format="yyyy-mm-dd">
                         </div>
                         <p class="help-block">Format must be : YYYY-MM-DD</p>
                     </div>
                     <div class="form-group">
                         <label for="end_at" class="col-sm-3 control-label">End at</label>
                         <div class="col-sm-6">
-                            <input type="text" name="end_at" id="end_at" class="form-control">
+                            <input type="text" name="end_at" id="end_at" class="form-control datepicker" data-date-format="yyyy-mm-dd">
                         </div>
                         <p class="help-block">Format must be : YYYY-MM-DD</p>
                     </div>

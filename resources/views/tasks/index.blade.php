@@ -14,6 +14,7 @@
                     <th>Start at</th>
                     <th>End at</th>
                     <th>Status</th>
+                    <th>&nbsp;</th>
                     </thead>
                     <tbody>
                         @foreach ($tasks as $task)
@@ -33,6 +34,13 @@
                             <td>
                                 {{ $task->status }}
                             </td>
+                            <td>
+                                <form action="/tasks/{{ $task->id }}" method="POST">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                    <button type="button" class="btn btn-danger" onclick="beforeDelete(this.parentElement, '{{ $task->name }}');">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -41,4 +49,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    beforeDelete = function (form, taskName) {
+    if (confirm("Are you sure you want to delete the task : " + taskName + " ?")) {
+    form.submit();
+    }
+    }
+</script>
 @endsection
