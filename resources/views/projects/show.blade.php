@@ -25,6 +25,7 @@
                     <th>Assigned to</th>
                     <th>Status</th>
                     <th>&nbsp;</th>
+                    <th>&nbsp;</th>
                     </thead>
                     <tbody>
                         @foreach ($tasks as $task)
@@ -43,6 +44,11 @@
                             </td>
                             <td>
                                 {{ $task->status }}
+                            </td>
+                            <td>
+                                <form action="/tasks/{{ $task->id }}/edit" method="GET">
+                                    <button type="submit" class="btn btn-default">Edit task</button>
+                                </form>
                             </td>
                             <td>
                                 <form action="/tasks/{{ $task->id }}" method="POST">
