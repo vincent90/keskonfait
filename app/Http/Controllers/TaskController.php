@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Comment;
 use App\Project;
 use App\Task;
+use App\Http\Requests\StoreCommentRequest;
+use Mail;
+use App\Mail\TaskAssigned;
+use App\Mail\TaskCommented;
 
 class TaskController extends Controller {
 
@@ -26,6 +31,28 @@ class TaskController extends Controller {
         return view('tasks.index', [
             'tasks' => $tasks,
         ]);
+    }
+
+    /**
+     * Create a new comment for a task.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function storeComment(StoreCommentRequest $request, Task $task) {
+        $comment = new Comment;
+        $comment->content = $request->content;
+        $comment->task_id = $task->id;
+        $comment->user_id = Auth::id();
+        $comment->save();
+
+        // send an email to the assigned user
+        try {
+            Mail::to($task->assignedTo()->email)->send(new TaskCommented($task, $comment));
+        } catch (Exception $e) {
+            // TODO something (display a warning to the user that the mail service is down)
+        }
+
+        return redirect('/tasks/' . $task->id);
     }
 
     /**
@@ -54,7 +81,9 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show(Task $task) {
-        throw new NotImplementedException();
+        return view('tasks.show', [
+            'task' => $task,
+        ]);
     }
 
     /**
@@ -113,6 +142,17 @@ class TaskController extends Controller {
     public function destroy(Task $task) {
         Task::findOrFail($task->id)->delete();
         return redirect('/projects');
+    }
+
+    /**
+     * Remove the specified comment.
+     *
+     * @param  \App\Comment  $comment
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyComment(Task $task, Comment $comment) {
+        Comment::findOrFail($comment->id)->delete();
+        return redirect('/tasks/' . $task->id);
     }
 
 }

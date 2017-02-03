@@ -26,3 +26,5 @@ Route::post('projects/{project}/create_task', 'ProjectController@storeTask')->na
 Route::resource('projects', 'ProjectController');
 
 Route::resource('tasks', 'TaskController');
+Route::post('tasks/{task}/create_comment', 'TaskController@storeComment')->name('task.store_comment');
+Route::delete('tasks/{task}/delete_comment/{comment}', 'TaskController@destroyComment')->name('task.destroy_comment');

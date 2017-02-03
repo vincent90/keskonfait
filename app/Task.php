@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\User;
+use App\Project;
 
 /**
  * Task
@@ -35,8 +36,26 @@ class Task extends Node {
      * @return type
      */
     public static function findAllForAuthenticatedUser() {
-        $tasks = DB::table('tasks')->where('assigned_to_user_id', '=', Auth::id())->get();
-        return $tasks;
+        return Task::where('assigned_to_user_id', '=', Auth::id())->get();
+    }
+
+    /**
+     * Get all comments of the task.
+     *
+     * @return type
+     */
+    public function comments() {
+        $comments = Comment::where('task_id', '=', $this->id)->get();
+        return $comments;
+    }
+
+    /**
+     * Get the project of the task.
+     *
+     * @return type
+     */
+    public function project() {
+        return Project::findOrFail($this->project_id);
     }
 
 }

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Input;
 use App\Project;
 use App\Task;
 use App\User;
+use Mail;
+use App\Mail\TaskAssigned;
 
 class ProjectController extends Controller {
 
@@ -80,6 +82,13 @@ class ProjectController extends Controller {
         }
 
         $task->save();
+
+        // send an email to the assigned user
+        try {
+            Mail::to('anthony.martin-coallier.1@etsmtl.net')->send(new TaskAssigned($task));
+        } catch (Exception $e) {
+            // TODO something (display a warning to the user that the mail service is down)
+        }
 
         return redirect('/projects/' . $project->id);
     }
