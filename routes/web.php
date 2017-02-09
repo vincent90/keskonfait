@@ -14,12 +14,13 @@ use App\Task;
  */
 
 Route::get('/', function () {
-    return view('welcome');
+//    return view('welcome');
+    return redirect('projects');
 });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+//Route::get('/home', 'HomeController@index');
 
 Route::get('projects/{project}/create_task', 'ProjectController@createTask')->name('project.create_task');
 Route::post('projects/{project}/create_task', 'ProjectController@storeTask')->name('project.store_task');

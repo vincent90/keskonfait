@@ -27,9 +27,27 @@ class User extends Authenticatable {
         'password', 'remember_token',
     ];
 
+    /**
+     * The projects that belong to the user.
+     */
     public function projects() {
-        return $this->belongsToMany('App\Project')
-                        ->withTimestamps();
+        return $this->belongsToMany('App\Project')->withTimestamps();
+    }
+
+    /**
+     * Get the tasks for the user.
+     */
+    public function tasks() {
+        return $this->hasMany('App\Task');
+    }
+
+    /**
+     * Used by VentureCraft/Revisionable
+     *
+     * @return type
+     */
+    public function identifiableName() {
+        return $this->name;
     }
 
 }

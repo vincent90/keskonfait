@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTask;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App;
 use App\Comment;
+use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\StoreTaskRequest;
+use App\Mail\TaskAssigned;
 use App\Project;
 use App\Task;
-use App\Http\Requests\StoreCommentRequest;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 use Mail;
-use App\Mail\TaskAssigned;
-use App\Mail\TaskCommented;
 
 class TaskController extends Controller {
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
     public function __construct() {
-        // Only authenticated users can access these methods.
         $this->middleware('auth');
     }
 
@@ -26,7 +30,7 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $tasks = Task::findAllForAuthenticatedUser();
+        $tasks = Auth::user()->tasks()->orderBy('start_at', 'asc')->get();
 
         return view('tasks.index', [
             'tasks' => $tasks,
@@ -44,13 +48,6 @@ class TaskController extends Controller {
         $comment->task_id = $task->id;
         $comment->user_id = Auth::id();
         $comment->save();
-
-        // send an email to the assigned user
-        try {
-            Mail::to($task->assignedTo()->email)->send(new TaskCommented($task, $comment));
-        } catch (Exception $e) {
-            // TODO something (display a warning to the user that the mail service is down)
-        }
 
         return redirect('/tasks/' . $task->id);
     }
@@ -70,7 +67,7 @@ class TaskController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreTask $request) {
+    public function store(StoreTaskRequest $request) {
         throw new NotImplementedException();
     }
 
@@ -93,44 +90,44 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Task $task) {
-        $project = Project::findorfail($task->id);
-
         return view('tasks.edit', [
             'task' => $task,
-            'project' => $project,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request\StoreTaskRequest  $request
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Task $task) {
+    public function update(StoreTaskRequest $request, Task $task) {
         // Only the project manager or the task's owner can edit the task.
-        $project = Project::findorfail($task->project_id);
-        if ($project->project_manager_id != Auth::id() || $task->assigned_to_user_id != Auth::id()) {
+        if (!$task->canUpdate(Auth::user())) {
             App::abort(403, 'Access denied');
         }
 
         $task = Task::findorfail($task->id);
         $task->name = $request->name;
         $task->description = $request->description;
+        $task->start_at = $request->start_at;
+        $task->end_at = $request->end_at;
+
+        // Send an email only if the user changed.
+        if ($task->user->id != $request->user_id) {
+            $task->user_id = $request->user_id;
+            try {
+                Mail::to(User::findOrFail($task->user_id)->email)->send(new TaskAssigned($task));
+            } catch (Exception $e) {
+                
+            }
+        }
+
         $task->status = $request->status;
-        $task->assigned_to_user_id = $request->assigned_to_user_id;
-
-        if ($task->start_at != null) {
-            $task->start_at = $request->start_at;
-        }
-        if ($task->end_at != null) {
-            $task->end_at = $request->end_at;
-        }
-
         $task->save();
 
-        return redirect('/tasks/');
+        return redirect('/tasks/' . $task->id);
     }
 
     /**
@@ -140,8 +137,13 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy(Task $task) {
+        if (!$task->canDelete(Auth::user())) {
+            App::abort(403, 'Access denied');
+        }
+
+        $project = $task->project;
         Task::findOrFail($task->id)->delete();
-        return redirect('/projects');
+        return redirect('/projects/' . $project->id);
     }
 
     /**

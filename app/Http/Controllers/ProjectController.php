@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use App\Exceptions\NotImplementedException;
-use App\Http\Requests\StoreProject;
-use App\Http\Requests\StoreTask;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Input;
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\StoreTaskRequest;
+use App\Mail\TaskAssigned;
 use App\Project;
 use App\Task;
 use App\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 use Mail;
-use App\Mail\TaskAssigned;
 
 class ProjectController extends Controller {
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
     public function __construct() {
-        // Only authenticated users can access these methods.
         $this->middleware('auth');
     }
 
@@ -26,7 +31,8 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $projects = Project::findAllForAuthenticatedManager();
+//        $projects = Auth::user()->projects;
+        $projects = Project::where('user_id', Auth::id())->get();
         $users = User::all()->except(Auth::id());
 
         return view('projects.index', [
@@ -60,34 +66,29 @@ class ProjectController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function storeTask(StoreTask $request, Project $project) {
+    public function storeTask(StoreTaskRequest $request, Project $project) {
         // Only the project manager can add root tasks.
-        if ($project->project_manager_id != Auth::id()) {
+        if (!$project->canUpdate(Auth::user())) {
             App::abort(403, 'Access denied');
         }
 
         $task = Task::create([
                     'name' => $request->name,
                     'description' => $request->description,
+                    'start_at' => $request->start_at,
+                    'end_at' => $request->end_at,
+                    'user_id' => $request->user_id,
                     'status' => $request->status,
-                    'assigned_to_user_id' => $request->assigned_to_user_id,
                     'project_id' => $project->id,
         ]);
 
-        if ($task->start_at != null) {
-            $task->start_at = $request->start_at;
-        }
-        if ($task->end_at != null) {
-            $task->end_at = $request->end_at;
-        }
-
         $task->save();
 
-        // send an email to the assigned user
+        // Send an email to the assigned user.
         try {
-            Mail::to('anthony.martin-coallier.1@etsmtl.net')->send(new TaskAssigned($task));
+            Mail::to(User::findOrFail($task->user_id)->email)->send(new TaskAssigned($task));
         } catch (Exception $e) {
-            // TODO something (display a warning to the user that the mail service is down)
+            
         }
 
         return redirect('/projects/' . $project->id);
@@ -99,21 +100,11 @@ class ProjectController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProject $request) {
-        $projects = new Project;
-        $projects->name = $request->name;
-        $projects->description = $request->description;
-        if ($request->start_at != null) {
-            $projects->start_at = $request->start_at;
-        }
-        if ($request->end_at != null) {
-            $projects->end_at = $request->end_at;
-        }
-        $projects->project_manager_id = Auth::id();
-        $projects->save();
+    public function store(StoreProjectRequest $request) {
+        $project = Project::create($request->all());
 
         if (Input::get('users') != null) {
-            $projects->users()->sync(Input::get('users'));
+            $project->users()->sync($request->users);
         }
 
         return redirect('/projects');
@@ -126,11 +117,8 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show(Project $project) {
-        $tasks = Task::roots()->where('project_id', '=', $project->id)->with('children')->get();
-
         return view('projects.show', [
             'project' => $project,
-            'tasks' => $tasks,
         ]);
     }
 
@@ -142,18 +130,6 @@ class ProjectController extends Controller {
      */
     public function edit(Project $project) {
         $users = User::all()->except(Auth::id());
-        $usersInProject = $project->users;
-
-        // get only the user(s) already in the project
-        foreach ($users as &$user) {
-            $user->selected = false;
-            foreach ($usersInProject as &$userInProject) {
-                if ($user->id == $userInProject->id) {
-                    $user->selected = true;
-                }
-            }
-        }
-
         return view('projects.edit', [
             'project' => $project,
             'users' => $users,
@@ -167,28 +143,23 @@ class ProjectController extends Controller {
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreProject $request, Project $project) {
-        if (!$project->canUpdate()) {
-            abort(403, 'Access denied.');
+    public function update(StoreProjectRequest $request, Project $project) {
+        if (!$project->canUpdate(Auth::user())) {
+            App::abort(403, 'Access denied');
         }
 
         $projects = Project::findOrFail($project->id);
         $projects->name = $request->name;
         $projects->description = $request->description;
-        if ($request->start_at != null) {
-            $projects->start_at = $request->start_at;
-        }
-        if ($request->end_at != null) {
-            $projects->end_at = $request->end_at;
-        }
-        $projects->project_manager_id = Auth::id();
+        $projects->start_at = $request->start_at;
+        $projects->end_at = $request->end_at;
         $projects->save();
 
         if (Input::get('users') != null) {
             $projects->users()->sync(Input::get('users'));
         }
 
-        return redirect('/projects');
+        return redirect('/projects/' . $project->id);
     }
 
     /**
@@ -198,8 +169,8 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy(Project $project) {
-        if (!$project->canDelete()) {
-            abort(403, 'Access denied.');
+        if (!$project->canDelete(Auth::user())) {
+            App::abort(403, 'Access denied');
         }
 
         Project::findOrFail($project->id)->delete();

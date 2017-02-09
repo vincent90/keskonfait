@@ -2,13 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use App\User;
+use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model {
 
+    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id'];
     protected $revisionCreationsEnabled = true;
 
     use \Venturecraft\Revisionable\RevisionableTrait;
@@ -18,22 +17,12 @@ class Project extends Model {
     }
 
     /**
-     * Retrieve all projects of the authenticated user.
-     *
-     * @return type
-     */
-    public static function findAllForAuthenticatedManager() {
-        $projects = DB::table('projects')->where('project_manager_id', '=', Auth::id())->get();
-        return $projects;
-    }
-
-    /**
      * Return true only if the user is the project manager.
      *
      * @return boolean
      */
-    public function canUpdate() {
-        if ($this->project_manager_id == Auth::id()) {
+    public function canUpdate(User $user) {
+        if ($this->user_id == $user->id) {
             return true;
         }
 
@@ -41,32 +30,47 @@ class Project extends Model {
     }
 
     /**
-     * Return true if the authenticated user is the manager of the project.
-     * It's assumed that if the user can update a project, he can also delete it.
+     * Return true if the user is the manager of the project.
+     * It's assumed that if a user can update a project, he can also delete it.
      *
      * @return type
      */
-    public function canDelete() {
-        return $this->canUpdate();
+    public function canDelete(User $user) {
+        return $this->canUpdate($user);
     }
 
     /**
-     * Get the list of users for the project.
-     *
-     * @return type
+     * The users that belong to the project.
      */
     public function users() {
-        return $this->belongsToMany('App\User')
-                        ->withTimestamps();
+        return $this->belongsToMany('App\User')->withTimestamps();
     }
 
     /**
-     * Get the owner of the project.
+     * Get the user that owns the project.
+     */
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
+
+    /**
+     * Get the tasks for the project.
+     */
+    public function tasks() {
+        return $this->hasMany('App\Task');
+    }
+
+    /**
+     * Used by VentureCraft/Revisionable
      *
      * @return type
      */
-    public function manager() {
-        return User::findOrFail($this->project_manager_id);
+    public function identifiableName() {
+        return $this->name;
+    }
+
+    public function getUserIdsAttribute() {
+        return $this->users->pluck('id');
     }
 
 }

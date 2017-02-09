@@ -54,7 +54,7 @@ echo json_encode([
                             <!-- Authentication Links -->
                             @if (Auth::guest())
                             <li><a href="{{ url('/login') }}">Login</a></li>
-                            <li><a href="{{ url('/register') }}">Register</a></li>
+                            <!--<li><a href="{{ url('/register') }}">Register</a></li>-->
                             @else
                             <li><a href="{{ url('/tasks') }}">My Tasks</a></li>
                             <li><a href="{{ url('/projects') }}">My projects</a></li>
@@ -88,13 +88,43 @@ echo json_encode([
             </div>
         </div>
 
+        <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Are you sure you want to delete this item?
+                    </div>
+                    <div class="modal-body">
+                        <p><b id="item-to-delete"></b></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-danger btn-ok">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Scripts -->
         <script src="/js/app.js"></script>
         <script src="/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-
         <script>
                                                $(document).ready(function () {
                                                    $('.datepicker').datepicker({autoclose: true});
+
+                                                   // Bootstrap modal invoker
+                                                   var $invoker = null;
+
+                                                   $('#confirm-delete').on('show.bs.modal', function (e) {
+                                                       $invoker = $(e.relatedTarget);
+                                                       $('#item-to-delete').text($invoker.data("item-to-delete"))
+                                                   });
+
+                                                   $('#confirm-delete').on('click', '.btn-ok', function (e) {
+                                                       let $form = $invoker.parent();
+                                                       $form.submit();
+                                                       return false;
+                                                   });
                                                });
         </script>
     </body>

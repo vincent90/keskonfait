@@ -17,14 +17,13 @@ class CreateProjectsTable extends Migration {
 
             $table->string('name');
             $table->text('description')->nullable();
-            $table->dateTime('start_at')->nullable();
-            $table->dateTime('end_at')->nullable();
+            $table->date('start_at');
+            $table->date('end_at');
 
             // the project manager owns the project
-            $table->integer('project_manager_id')->unsigned();
-            $table->foreign('project_manager_id')
-                    ->references('id')->on('users')
-                    ->onDelete('cascade');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')
+                    ->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

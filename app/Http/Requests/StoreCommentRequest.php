@@ -22,7 +22,9 @@ class StoreCommentRequest extends FormRequest {
      */
     public function rules() {
         return [
-                //
+            'content' => 'required',
+//            'task_id' => 'required|exists:tasks,id',
+//            'user_id' => 'required|exists:users,id',
         ];
     }
 

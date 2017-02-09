@@ -30,7 +30,7 @@ class TaskAssigned extends Mailable {
      * @return $this
      */
     public function build() {
-        return $this->view('emails.test');
+        return $this->view('emails.task_assigned');
     }
 
 }

@@ -2,17 +2,22 @@
 
 namespace App;
 
-use Baum\Node;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use App\User;
-use App\Project;
+use Baum\Node;
 
 /**
  * Task
  */
 class Task extends Node {
+
+    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id', 'status', 'project_id'];
+    protected $revisionCreationsEnabled = true;
+
+    use \Venturecraft\Revisionable\RevisionableTrait;
+
+    public static function boot() {
+        parent::boot();
+    }
 
     /**
      * Table name.
@@ -22,40 +27,55 @@ class Task extends Node {
     protected $table = 'tasks';
 
     /**
-     * Get the user associated with this task.
-     *
-     * @return type
-     */
-    public function assignedTo() {
-        return User::findOrFail($this->assigned_to_user_id);
-    }
-
-    /**
-     * Get all tasks of a specified user.
-     *
-     * @return type
-     */
-    public static function findAllForAuthenticatedUser() {
-        return Task::where('assigned_to_user_id', '=', Auth::id())->get();
-    }
-
-    /**
-     * Get all comments of the task.
-     *
-     * @return type
+     * Get the comments for the task.
      */
     public function comments() {
-        $comments = Comment::where('task_id', '=', $this->id)->get();
-        return $comments;
+        return $this->hasMany('App\Comment');
+    }
+
+    /**
+     * Return true only if the user can update the task (if he owns the projet).
+     *
+     * @return boolean
+     */
+    public function canUpdate(User $user) {
+        if ($this->project->user_id == $user->id) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return true only if the user can delete the task.
+     *
+     * @return type
+     */
+    public function canDelete(User $user) {
+        return $this->canUpdate($user);
+    }
+
+    /**
+     * Get the user that owns the task.
+     */
+    public function user() {
+        return $this->belongsTo('App\User');
     }
 
     /**
      * Get the project of the task.
+     */
+    public function project() {
+        return $this->belongsTo('App\Project');
+    }
+
+    /**
+     * Used by VentureCraft/Revisionable
      *
      * @return type
      */
-    public function project() {
-        return Project::findOrFail($this->project_id);
+    public function identifiableName() {
+        return $this->name;
     }
 
 }
