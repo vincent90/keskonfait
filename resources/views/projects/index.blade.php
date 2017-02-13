@@ -3,16 +3,14 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
-        @include('errors.common.errors')
-
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">New project</h3>
+                New project
             </div>
             <div class="panel-body">
+                @include('include.errors')
                 <form action="/projects" method="POST" class="form-horizontal">
                     {{ csrf_field() }}
-
                     <div class="form-group">
                         <label for="name" class="col-sm-3 control-label">* Project name</label>
                         <div class="col-sm-6">
@@ -45,7 +43,7 @@
                             <select multiple class="form-control" name="users[]" id="users[]">
                                 @if ($users->count() > 0)
                                 @foreach($users as $user)
-                                <option value="{{$user->id}}" {{ (collect(old('users'))->contains($user->id)) ? 'selected':'' }}>{{$user->name}}</option>
+                                <option value="{{$user->id}}" {{ (collect(old('users'))->contains($user->id)) ? 'selected':'' }}>{{$user->fullName()}}</option>
                                 @endforeach
                                 @endif
                             </select>
@@ -54,7 +52,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-6">
-                            <button type="submit" class="btn btn-primary pull-right">
+                            <button type="submit" class="btn btn-primary">
                                 Add project
                             </button>
                         </div>
@@ -66,7 +64,7 @@
         @if (count($projects) > 0)
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">My projects</h3>
+                My projects
             </div>
             <div class="panel-body">
                 <table class="table table-striped">
@@ -91,14 +89,14 @@
                             </td>
                             <td>
                                 <form action="/projects/{{ $project->id }}/edit" method="GET">
-                                    <button type="submit" class="btn btn-default pull-right">Edit</button>
+                                    <button type="submit" class="btn btn-default">Edit</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="/projects/{{ $project->id }}" method="POST">
                                     {{ csrf_field() }}
                                     {{ method_field('DELETE') }}
-                                    <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-item-to-delete="{{ $project->name }}" data-target="#confirm-delete">Delete</button>
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="{{ $project->name }}" data-target="#confirm-delete">Delete</button>
                                 </form>
                             </td>
                         </tr>

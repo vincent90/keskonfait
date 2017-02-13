@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Task;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreCommentRequest extends FormRequest {
 
@@ -12,7 +14,9 @@ class StoreCommentRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        return true;
+        $input = $this->all();
+        $user = Auth::user();
+        return Task::findOrFail($input['task_id'])->canComment($user);
     }
 
     /**
@@ -23,9 +27,20 @@ class StoreCommentRequest extends FormRequest {
     public function rules() {
         return [
             'content' => 'required',
-//            'task_id' => 'required|exists:tasks,id',
-//            'user_id' => 'required|exists:users,id',
+            'task_id' => 'required|exists:tasks,id',
         ];
+    }
+
+    /**
+     * Get all of the input and files for the request.
+     *
+     * @return array
+     */
+    public function all() {
+        $input = parent::all();
+        $input['user_id'] = Auth::id();
+        $this->replace($input);
+        return parent::all();
     }
 
 }

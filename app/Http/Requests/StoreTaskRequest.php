@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Project;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreTaskRequest extends FormRequest {
 
@@ -12,7 +14,8 @@ class StoreTaskRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        return true;
+        $input = $this->all();
+        return Project::findOrFail($input['project_id'])->canEdit(Auth::user());
     }
 
     /**
@@ -28,20 +31,8 @@ class StoreTaskRequest extends FormRequest {
             'user_id' => 'required|exists:users,id',
             'status' => 'required|in:Open,Closed',
             'project_id' => 'exists:projects,id',
+            'parent_id' => 'exists:tasks,id',
         ];
-    }
-
-    public function all() {
-        $attributes = parent::all();
-
-        $start_at = $attributes['start_at'];
-        $attributes['start_at'] = !empty($start_at) ? $attributes['start_at'] : null;
-
-        $end_at = $attributes['end_at'];
-        $attributes['end_at'] = !empty($end_at) ? $attributes['end_at'] : null;
-
-        $this->replace($attributes);
-        return parent::all();
     }
 
 }

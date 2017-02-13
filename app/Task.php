@@ -10,7 +10,7 @@ use Baum\Node;
  */
 class Task extends Node {
 
-    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id', 'status', 'project_id'];
+    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id', 'status', 'project_id', 'parent_id', 'lft', 'rgt', 'depth'];
     protected $revisionCreationsEnabled = true;
 
     use \Venturecraft\Revisionable\RevisionableTrait;
@@ -20,57 +20,84 @@ class Task extends Node {
     }
 
     /**
-     * Table name.
+     * Return true if the user can see the task. Any user assigned to a project can see the project's tasks.
      *
-     * @var string
-     */
-    protected $table = 'tasks';
-
-    /**
-     * Get the comments for the task.
-     */
-    public function comments() {
-        return $this->hasMany('App\Comment');
-    }
-
-    /**
-     * Return true only if the user can update the task (if he owns the projet).
-     *
+     * @param User $user
      * @return boolean
      */
-    public function canUpdate(User $user) {
-        if ($this->project->user_id == $user->id) {
-            return true;
-        }
-
-        return false;
+    public function canShow(User $user) {
+        return collect($this->project->userIds())->contains($user->id);
     }
 
     /**
-     * Return true only if the user can delete the task.
+     * Return true if the user can edit the task. Any user assigned to a project can edit the project's tasks.
+     *
+     * @param User $user
+     * @return type
+     */
+    public function canEdit(User $user) {
+        return collect($this->project->userIds())->contains($user->id);
+    }
+
+    /**
+     * Return true if the user can destroy the task. Only the project manager can destroy a task.
+     *
+     * @param User $user
+     * @return type
+     */
+    public function canDestroy(User $user) {
+        return $this->project->user->id == $user->id;
+    }
+
+    /**
+     * If a user can see a task, he can also comment it.
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function canComment(User $user) {
+        return $this->canShow($user);
+    }
+
+    /**
+     * Recursively find the project.
      *
      * @return type
      */
-    public function canDelete(User $user) {
-        return $this->canUpdate($user);
+    public function project() {
+        $project = $this->belongsTo('App\Project');
+
+        if (!count($project->get())) {
+            $parentTask = $this->parent;
+            while (!$parentTask->isRoot()) {
+                $parentTask = $parentTask->parent;
+            }
+            $project = $parentTask->belongsTo('App\Project');
+        }
+
+        return $project;
     }
 
     /**
-     * Get the user that owns the task.
+     * Get the user assigned to the task.
+     *
+     * @return type
      */
     public function user() {
         return $this->belongsTo('App\User');
     }
 
     /**
-     * Get the project of the task.
+     * Get the comments for the task.
+     *
+     * @return type
      */
-    public function project() {
-        return $this->belongsTo('App\Project');
+    public function comments() {
+        return $this->hasMany('App\Comment');
     }
 
     /**
-     * Used by VentureCraft/Revisionable
+     * Used by VentureCraft/Revisionable.
      *
      * @return type
      */

@@ -3,23 +3,16 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
-        @include('errors.common.errors')
-
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Edit task</h3>
+                Edit task
             </div>
             <div class="panel-body">
+                @include('include.errors')
                 <form action="/tasks/{{$task->id}}" method="POST" class="form-horizontal">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
-
-                    <div class="form-group">
-                        <label for="project_name" class="col-sm-3 control-label">* Task for</label>
-                        <div class="col-sm-6">
-                            <input type="text" name="project_name" id="project_name" class="form-control" disabled="true" value="{{$task->project->name}}">
-                        </div>
-                    </div>
+                    <input type="hidden" name="project_id" id="project_id" class="form-control" value="{{ $task->project->id }}">
                     <div class="form-group">
                         <label for="name" class="col-sm-3 control-label">* Task name</label>
                         <div class="col-sm-6">
@@ -50,10 +43,9 @@
                         <label for="user_id" class="col-sm-3 control-label">* Assigned to</label>
                         <div class="col-sm-6">
                             <select class="form-control" name="user_id" id="user_id">
-                                <option value="{{ Auth::user()->id }}" @if (old('user_id', $task->user->id) == Auth::user()->id) selected="selected" @endif>{{ Auth::user()->name }}</option>
-                                @if ($task->project->users->count() > 0)
-                                @foreach($task->project->users as $user)
-                                <option value="{{$user->id}}" @if (old('user_id', $task->user->id) == $user->id) selected="selected" @endif>{{$user->name}}</option>
+                                @if (getUsers($task)->count() > 0)
+                                @foreach(getUsers($task) as $user)
+                                <option value="{{$user->id}}" @if (old('user_id', $task->user->id) == $user->id) selected="selected" @endif>{{$user->fullName()}}</option>
                                 @endforeach
                                 @endif
                             </select>
@@ -70,7 +62,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-6">
-                            <button type="submit" class="btn btn-primary pull-right">
+                            <button type="submit" class="btn btn-primary">
                                 Save changes
                             </button>
                         </div>
@@ -80,4 +72,18 @@
         </div>
     </div>
 </div>
+
+@php
+function getUsers($task) {
+if ($task->project != null) {
+return $task->project->users;
+}
+$parentTask = $task->parentTask()->get();
+if(!$parentTask->isRoot()){
+$parentTask = $task->parentTask()->get();
+}
+return $task->project->users;
+}
+@endphp
+
 @endsection

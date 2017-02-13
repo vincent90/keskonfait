@@ -3,17 +3,15 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
-        @include('errors.common.errors')
-
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Edit project</h3>
+                Edit project
             </div>
             <div class="panel-body">
+                @include('include.errors')
                 <form action="/projects/{{$project->id}}" method="POST" class="form-horizontal">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
-
                     <div class="form-group">
                         <label for="name" class="col-sm-3 control-label">* Project name</label>
                         <div class="col-sm-6">
@@ -46,7 +44,7 @@
                             <select multiple class="form-control" name="users[]" id="users[]">
                                 @if ($users->count() > 0)
                                 @foreach($users as $user)
-                                <option value="{{$user->id}}" {{ (collect(old('users', $project->getUserIdsAttribute()))->contains($user->id)) ? 'selected':'' }}>{{$user->name}}</option>
+                                <option value="{{$user->id}}" {{ (collect(old('users', $project->userIds()))->contains($user->id)) ? 'selected':'' }}>{{ $user->fullName() }}</option>
                                 @endforeach
                                 @endif
                             </select>
@@ -55,7 +53,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-6">
-                            <button type="submit" class="btn btn-primary pull-right">
+                            <button type="submit" class="btn btn-primary">
                                 Save changes
                             </button>
                         </div>

@@ -13,19 +13,23 @@ use App\Task;
   |
  */
 
+// Automatically redirect to the home page (or the login form if the user is not authenticated).
 Route::get('/', function () {
-//    return view('welcome');
+    return redirect('projects');
+});
+Route::get('/home', function () {
     return redirect('projects');
 });
 
 Auth::routes();
 
-//Route::get('/home', 'HomeController@index');
-
-Route::get('projects/{project}/create_task', 'ProjectController@createTask')->name('project.create_task');
-Route::post('projects/{project}/create_task', 'ProjectController@storeTask')->name('project.store_task');
-Route::resource('projects', 'ProjectController');
-
-Route::resource('tasks', 'TaskController');
-Route::post('tasks/{task}/create_comment', 'TaskController@storeComment')->name('task.store_comment');
-Route::delete('tasks/{task}/delete_comment/{comment}', 'TaskController@destroyComment')->name('task.destroy_comment');
+Route::resource('comments', 'CommentController', ['except' => [
+        'index', 'create', 'show', 'edit', 'update',
+]]);
+Route::resource('projects', 'ProjectController', ['except' => [
+        'create',
+]]);
+Route::resource('tasks', 'TaskController', ['except' => [
+        'create',
+]]);
+Route::resource('users', 'UserController');

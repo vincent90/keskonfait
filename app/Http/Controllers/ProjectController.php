@@ -2,17 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App;
-use App\Exceptions\NotImplementedException;
 use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\StoreTaskRequest;
-use App\Mail\TaskAssigned;
 use App\Project;
-use App\Task;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
-use Mail;
 
 class ProjectController extends Controller {
 
@@ -31,9 +25,9 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-//        $projects = Auth::user()->projects;
-        $projects = Project::where('user_id', Auth::id())->get();
-        $users = User::all()->except(Auth::id());
+        // TODO : Find why this doesn't work....(only the user who created the project can see it...)
+        $projects = Project::has('users')->where('user_id', Auth::id())->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
+        $users = User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get()->except(Auth::id());
 
         return view('projects.index', [
             'projects' => $projects,
@@ -47,67 +41,28 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create() {
-        throw new NotImplementedException();
-    }
-
-    /**
-     * Show the form for creating a new root task for a project.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function createTask(Project $project) {
-        return view('projects.create_task', [
-            'project' => $project,
-        ]);
-    }
-
-    /**
-     * Create a new root task for a project.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function storeTask(StoreTaskRequest $request, Project $project) {
-        // Only the project manager can add root tasks.
-        if (!$project->canUpdate(Auth::user())) {
-            App::abort(403, 'Access denied');
-        }
-
-        $task = Task::create([
-                    'name' => $request->name,
-                    'description' => $request->description,
-                    'start_at' => $request->start_at,
-                    'end_at' => $request->end_at,
-                    'user_id' => $request->user_id,
-                    'status' => $request->status,
-                    'project_id' => $project->id,
-        ]);
-
-        $task->save();
-
-        // Send an email to the assigned user.
-        try {
-            Mail::to(User::findOrFail($task->user_id)->email)->send(new TaskAssigned($task));
-        } catch (Exception $e) {
-            
-        }
-
-        return redirect('/projects/' . $project->id);
+        
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  StoreProjectRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreProjectRequest $request) {
         $project = Project::create($request->all());
 
-        if (Input::get('users') != null) {
-            $project->users()->sync($request->users);
+        // Sync the many-to-many relationship.
+        if (Input::get('users') == null) {
+            $users = [];
+        } else {
+            $users = Input::get('users');
         }
+        array_push($users, Auth::id());
+        $project->users()->sync($users);
 
-        return redirect('/projects');
+        return redirect('/projects/' . $project->id);
     }
 
     /**
@@ -129,7 +84,8 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Project $project) {
-        $users = User::all()->except(Auth::id());
+        $users = User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get()->except(Auth::id());
+
         return view('projects.edit', [
             'project' => $project,
             'users' => $users,
@@ -139,13 +95,13 @@ class ProjectController extends Controller {
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  StoreProjectRequest  $request
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
     public function update(StoreProjectRequest $request, Project $project) {
-        if (!$project->canUpdate(Auth::user())) {
-            App::abort(403, 'Access denied');
+        if (!$project->canEdit(Auth::user())) {
+            abort(403, 'Access denied');
         }
 
         $projects = Project::findOrFail($project->id);
@@ -155,9 +111,14 @@ class ProjectController extends Controller {
         $projects->end_at = $request->end_at;
         $projects->save();
 
-        if (Input::get('users') != null) {
-            $projects->users()->sync(Input::get('users'));
+        // Sync the many-to-many relationship.
+        if (Input::get('users') == null) {
+            $users = [];
+        } else {
+            $users = Input::get('users');
         }
+        array_push($users, Auth::id());
+        $project->users()->sync($users);
 
         return redirect('/projects/' . $project->id);
     }
@@ -169,8 +130,8 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy(Project $project) {
-        if (!$project->canDelete(Auth::user())) {
-            App::abort(403, 'Access denied');
+        if (!$project->canDestroy(Auth::user())) {
+            abort(403, 'Access denied');
         }
 
         Project::findOrFail($project->id)->delete();

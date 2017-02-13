@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Task;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,36 +17,35 @@ class Comment extends Model {
     }
 
     /**
-     * Get the user that made the comment.
+     * Return true if the user can destroy the comment. Only the project manager can destroy the comment.
+     *
+     * @param User $user
+     * @return type
+     */
+    public function canDestroy(User $user) {
+        return $this->task->project->user->id == $user->id;
+    }
+
+    /**
+     * Get the user who made the comment.
+     *
+     * @return type
      */
     public function user() {
         return $this->belongsTo('App\User');
     }
 
     /**
-     * Return true only if the user can update the comment.
-     *
-     * @return boolean
-     */
-    public function canUpdate(User $user) {
-        if ($this->user_id == $user->id) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Return true only if the user can delete the comment.
+     * Get the task for the comment.
      *
      * @return type
      */
-    public function canDelete(User $user) {
-        return $this->canUpdate($user);
+    public function task() {
+        return $this->belongsTo('App\Task');
     }
 
     /**
-     * Used by VentureCraft/Revisionable
+     * Used by VentureCraft/Revisionable.
      *
      * @return type
      */

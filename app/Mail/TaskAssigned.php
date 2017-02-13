@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Task;
 
-class TaskAssigned extends Mailable {
+class TaskAssigned extends Mailable implements ShouldQueue {
 
     use Queueable,
         SerializesModels;
@@ -18,6 +18,7 @@ class TaskAssigned extends Mailable {
     /**
      * Create a new message instance.
      *
+     * @param Task $task
      * @return void
      */
     public function __construct(Task $task) {

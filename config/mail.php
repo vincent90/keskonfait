@@ -49,7 +49,7 @@ return [
       |
      */
     'from' => [
-        'address' => 'THIS_IS_NOT_A_JUNK_MAIL_FROM_A_FAKE_WEBSITE@KesKonFait.com',
+        'address' => 'KesKonFait@KesKonFait.com',
         'name' => 'KesKonFait',
     ],
     /*

@@ -52,18 +52,32 @@ echo json_encode([
                         <!-- Right Side Of Navbar -->
                         <ul class="nav navbar-nav navbar-right">
                             <!-- Authentication Links -->
-                            @if (Auth::guest())
-                            <li><a href="{{ url('/login') }}">Login</a></li>
+                            <!--<li><a href="{{ url('/login') }}">Login</a></li>-->
                             <!--<li><a href="{{ url('/register') }}">Register</a></li>-->
-                            @else
+                            @if (!Auth::guest())
+                            @if (Auth::user()->superuser)
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User management <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ url('/users') }}">View all users</a></li>
+                                    <li><a href="{{ url('/users/create') }}">Create a new user</a></li>
+                                </ul>
+                            </li>
+                            @endif
                             <li><a href="{{ url('/tasks') }}">My Tasks</a></li>
                             <li><a href="{{ url('/projects') }}">My projects</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                    @if (Auth::user()->user_image)
+                                    <img src="{{URL::asset('images/' . Auth::user()->user_image)}}" alt="User image">
+                                    @endif
+                                    {{ Auth::user()->fullName() }} <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="{{ url('/users/' . Auth::id()) }}">My profile</a>
+                                    </li>
                                     <li>
                                         <a href="{{ url('/logout') }}"
                                            onclick="event.preventDefault();

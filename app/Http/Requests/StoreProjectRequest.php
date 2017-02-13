@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,18 +29,18 @@ class StoreProjectRequest extends FormRequest {
         ];
     }
 
+    /**
+     * Get all of the input and files for the request.
+     *
+     * @return array
+     */
     public function all() {
-        $attributes = parent::all();
+        $input = parent::all();
 
-        $attributes['user_id'] = Auth::id();
+        $userId = Auth::id();
+        $input['user_id'] = $userId;
 
-//        $start_at = $attributes['start_at'];
-//        $attributes['start_at'] = !empty($start_at) ? $attributes['start_at'] : null;
-//
-//        $end_at = $attributes['end_at'];
-//        $attributes['end_at'] = !empty($end_at) ? $attributes['end_at'] : null;
-
-        $this->replace($attributes);
+        $this->replace($input);
         return parent::all();
     }
 

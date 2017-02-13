@@ -10,7 +10,8 @@
         "barryvdh/laravel-ide-helper": "v2.2.1",
         "baum/baum": "~1.1",
         "guzzlehttp/guzzle": "^6.2",
-        "venturecraft/revisionable": "^1.28"
+        "venturecraft/revisionable": "^1.28",
+        "intervention/image": "^2.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
