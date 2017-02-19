@@ -5,19 +5,12 @@ namespace App;
 use App\User;
 use Baum\Node;
 
-/**
- * Task
- */
 class Task extends Node {
-
-    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id', 'status', 'project_id', 'parent_id', 'lft', 'rgt', 'depth'];
-    protected $revisionCreationsEnabled = true;
 
     use \Venturecraft\Revisionable\RevisionableTrait;
 
-    public static function boot() {
-        parent::boot();
-    }
+    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id', 'status', 'project_id', 'parent_id', 'lft', 'rgt', 'depth'];
+    protected $revisionCreationsEnabled = true;
 
     /**
      * Return true if the user can see the task. Any user assigned to a project can see the project's tasks.
@@ -26,17 +19,17 @@ class Task extends Node {
      * @return boolean
      */
     public function canShow(User $user) {
-        return collect($this->project->userIds())->contains($user->id);
+        return $this->project->canShow($user);
     }
 
     /**
-     * Return true if the user can edit the task. Any user assigned to a project can edit the project's tasks.
+     * Return true if the user can edit the task.
      *
      * @param User $user
      * @return type
      */
     public function canEdit(User $user) {
-        return collect($this->project->userIds())->contains($user->id);
+        return $this->project->user->id == $user->id || $this->user->id == $user->id;
     }
 
     /**

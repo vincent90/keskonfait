@@ -15,8 +15,8 @@ class StoreCommentRequest extends FormRequest {
      */
     public function authorize() {
         $input = $this->all();
-        $user = Auth::user();
-        return Task::findOrFail($input['task_id'])->canComment($user);
+        $task = Task::findOrFail($input['task_id']);
+        return $task->canComment(Auth::user());
     }
 
     /**

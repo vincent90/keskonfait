@@ -34,6 +34,7 @@ class CommentController extends Controller {
      */
     public function store(StoreCommentRequest $request) {
         $comment = Comment::create($request->all());
+        $request->session()->flash('alert-success', 'Comment has been created successfully!');
         return redirect('/tasks/' . $comment->task->id);
     }
 
@@ -83,6 +84,7 @@ class CommentController extends Controller {
 
         Comment::findOrFail($comment->id)->delete();
 
+        session()->flash('alert-success', 'Comment has been deleted successfully!');
         return redirect('/tasks/' . $task->id);
     }
 

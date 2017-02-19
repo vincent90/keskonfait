@@ -11,6 +11,15 @@ use Image;
 class UserController extends Controller {
 
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct() {
+        $this->middleware('auth');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -20,8 +29,9 @@ class UserController extends Controller {
             abort(403, 'Access denied');
         }
 
+        $users = User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get();
         return view('users.index', [
-            'users' => User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get(),
+            'users' => $users,
         ]);
     }
 
@@ -31,6 +41,10 @@ class UserController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create() {
+        if (!Auth::user()->superuser) {
+            abort(403, 'Access denied');
+        }
+
         return view('users.create');
     }
 
@@ -45,10 +59,11 @@ class UserController extends Controller {
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->phone_number = $request->phone_number;
-
-        $user->discord_account = $request->discord_account;
+        $user->discord_user = $request->discord_user;
+        $user->discord_channel = $request->discord_channel;
         $user->email = $request->email;
         $user->superuser = $request->superuser;
+        $user->active = $request->active;
         $user->password = bcrypt($request->password);
         $user->save();
 
@@ -62,6 +77,7 @@ class UserController extends Controller {
         }
         $user->save();
 
+        session()->flash('alert-success', 'User has been created successfully!');
         return redirect('/users/' . $user->id);
     }
 
@@ -101,10 +117,6 @@ class UserController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(EditUserRequest $request, User $user) {
-        if (!Auth::user()->superuser && Auth::id() != $user->id) {
-            abort(403, 'Access denied');
-        }
-
         $user = User::findorfail($user->id);
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
@@ -119,18 +131,18 @@ class UserController extends Controller {
             $file = Image::make($image->getRealPath())->resize(32, 32)->save($path);
         }
 
-        $user->discord_account = $request->discord_account;
+        $user->discord_user = $request->discord_user;
+        $user->discord_channel = $request->discord_channel;
         $user->email = $request->email;
 
-        // Only a superuser can update this field.
         if (Auth::user()->superuser) {
             $user->superuser = $request->superuser;
+            $user->active = $request->active;
         }
-
-        $user->password = bcrypt($request->password);
 
         $user->save();
 
+        session()->flash('alert-success', 'User has been edited successfully!');
         return redirect('/users/' . $user->id);
     }
 
@@ -145,7 +157,11 @@ class UserController extends Controller {
             abort(403, 'Access denied');
         }
 
-        User::findOrFail($user->id)->delete();
+        $user = User::findorfail($user->id);
+        $user->active = false;
+        $user->save();
+
+        session()->flash('alert-success', 'User has been deactivated successfully!');
         return redirect('/users');
     }
 

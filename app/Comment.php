@@ -7,17 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model {
 
+    use \Venturecraft\Revisionable\RevisionableTrait;
+
     protected $fillable = ['content', 'task_id', 'user_id'];
     protected $revisionCreationsEnabled = true;
 
-    use \Venturecraft\Revisionable\RevisionableTrait;
-
-    public static function boot() {
-        parent::boot();
-    }
-
     /**
-     * Return true if the user can destroy the comment. Only the project manager can destroy the comment.
+     * Return true if the user can destroy the comment. Only the project manager can destroy a comment.
      *
      * @param User $user
      * @return type
@@ -36,7 +32,7 @@ class Comment extends Model {
     }
 
     /**
-     * Get the task for the comment.
+     * Get the task on which the comment was made.
      *
      * @return type
      */

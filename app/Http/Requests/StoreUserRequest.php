@@ -13,7 +13,7 @@ class StoreUserRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        // Only a superuser can create/update a user account.
+        // Only a superuser can create a user account.
         return Auth::user()->superuser;
     }
 
@@ -28,11 +28,24 @@ class StoreUserRequest extends FormRequest {
             'last_name' => 'required|max:255',
             'phone_number' => 'required|max:30',
             'user_image' => 'max:255',
-            'discord_account' => 'max:255|unique:users',
+            'discord_user' => 'max:255|unique:users',
+            'discord_channel' => 'max:255',
             'email' => 'required|email|max:255|unique:users',
             'superuser' => 'required',
             'password' => 'required|min:6|confirmed',
         ];
+    }
+
+    /**
+     * Get all of the input and files for the request.
+     *
+     * @return array
+     */
+    public function all() {
+        $input = parent::all();
+        $input['active'] = true;
+        $this->replace($input);
+        return parent::all();
     }
 
 }

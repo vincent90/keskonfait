@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
 
-class StoreProjectRequest extends FormRequest {
+class EditProjectRequest extends FormRequest {
 
     /**
      * Always return true (any user can create a new project).
@@ -14,7 +14,8 @@ class StoreProjectRequest extends FormRequest {
      * @return boolean
      */
     public function authorize() {
-        return true;
+        $project = $this->route('project');
+        return $project->canEdit(Auth::user());
     }
 
     /**
@@ -28,18 +29,6 @@ class StoreProjectRequest extends FormRequest {
             'start_at' => 'required',
             'end_at' => 'required',
         ];
-    }
-
-    /**
-     * Get all of the input and files for the request.
-     *
-     * @return array
-     */
-    public function all() {
-        $input = parent::all();
-        $input['user_id'] = Auth::id();
-        $this->replace($input);
-        return parent::all();
     }
 
     /**

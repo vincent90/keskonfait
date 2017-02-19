@@ -11,15 +11,16 @@
                 @if ($tasks->count() > 0)
                 <table class="table table-striped">
                     <thead>
-                    <th style="width:65%">Task name</th>
+                    <th style="width:60%">Task name</th>
                     <th style="width:10%">Start at</th>
                     <th style="width:10%">End at</th>
                     <th style="width:5%">Status</th>
                     <th style="width:5%">&nbsp;</th>
                     <th style="width:5%">&nbsp;</th>
+                    <th style="width:5%">&nbsp;</th>
                     </thead>
                     <tbody>
-                        @foreach ($tasks->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get() as $task)
+                        @foreach ($tasks as $task)
                         <tr>
                             <td>
                                 <a href="{{ route('tasks.show', ['id' => $task->id]) }}">{{ $task->name }}</a>
@@ -34,16 +35,29 @@
                                 {{ $task->status }}
                             </td>
                             <td>
+                                @if($task->status != "Closed")
+                                <form action="/tasks/{{ $task->id }}/close" method="POST">
+                                    {{ csrf_field() }}
+                                    {{ method_field('PUT') }}
+                                    <button type="submit" class="btn btn-primary">Close</button>
+                                </form>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($task->canEdit(Auth::user()))
                                 <form action="/tasks/{{ $task->id }}/edit" method="GET">
                                     <button type="submit" class="btn btn-default">Edit</button>
                                 </form>
+                                @endif
                             </td>
                             <td>
+                                @if ($task->canDestroy(Auth::user()))
                                 <form action="/tasks/{{ $task->id }}" method="POST">
                                     {{ csrf_field() }}
                                     {{ method_field('DELETE') }}
                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="{{ $task->name }}" data-target="#confirm-delete">Delete</button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

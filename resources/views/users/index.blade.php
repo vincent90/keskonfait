@@ -3,6 +3,8 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
+        @include('include.messages')
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 All users
@@ -33,7 +35,7 @@
                                 {{ $user->phone_number }}
                             </td>
                             <td>
-                                {{ $user->discord_account }}
+                                {{ $user->discord_user }}
                             </td>
                             <td>
                                 {{ $user->email }}

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
-use App\Mail\TaskAssigned;
 use App\Task;
-use App\User;
 use Illuminate\Support\Facades\Auth;
-use Mail;
 
 class TaskController extends Controller {
 
@@ -26,7 +24,7 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $tasks = Auth::user()->tasks();
+        $tasks = Auth::user()->tasks()->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
 
         return view('tasks.index', [
             'tasks' => $tasks,
@@ -71,13 +69,7 @@ class TaskController extends Controller {
             ]);
         }
 
-        // Send an email to the assigned user.
-        try {
-            Mail::to($task->user->email)->send(new TaskAssigned($task));
-        } catch (Exception $exception) {
-            
-        }
-
+        session()->flash('alert-success', 'Task has been created successfully!');
         return redirect('/projects/' . $request->project_id);
     }
 
@@ -88,6 +80,10 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show(Task $task) {
+        if (!$task->canShow(Auth::user())) {
+            abort(403, 'Access denied');
+        }
+
         return view('tasks.show', [
             'task' => $task,
         ]);
@@ -100,6 +96,10 @@ class TaskController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Task $task) {
+        if (!$task->canEdit(Auth::user())) {
+            abort(403, 'Access denied');
+        }
+
         return view('tasks.edit', [
             'task' => $task,
         ]);
@@ -108,30 +108,21 @@ class TaskController extends Controller {
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request\StoreTaskRequest  $request
+     * @param  EditTaskRequest  $request
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreTaskRequest $request, Task $task) {
+    public function update(EditTaskRequest $request, Task $task) {
         $task = Task::findorfail($task->id);
         $task->name = $request->name;
         $task->description = $request->description;
         $task->start_at = $request->start_at;
         $task->end_at = $request->end_at;
-
-        // Send an email only if the assigned user has changed.
-        if ($task->user->id != $request->user_id) {
-            $task->user_id = $request->user_id;
-            try {
-                Mail::to(User::findOrFail($request->user_id)->email)->send(new TaskAssigned($task));
-            } catch (Exception $e) {
-                
-            }
-        }
-
+        $task->user_id = $request->user_id;
         $task->status = $request->status;
         $task->save();
 
+        session()->flash('alert-success', 'Task has been updated successfully!');
         return redirect('/tasks/' . $task->id);
     }
 
@@ -148,7 +139,28 @@ class TaskController extends Controller {
 
         $project = $task->project;
         Task::findOrFail($task->id)->delete();
+
+        session()->flash('alert-success', 'Task has been deleted successfully!');
         return redirect('/projects/' . $project->id);
+    }
+
+    /**
+     * Close the task.
+     *
+     * @param  \App\Task  $task
+     * @return \Illuminate\Http\Response
+     */
+    public function close(Task $task) {
+        if (!$task->canEdit(Auth::user())) {
+            abort(403, 'Access denied');
+        }
+
+        $task = Task::findorfail($task->id);
+        $task->status = 'Closed';
+        $task->save();
+
+        session()->flash('alert-success', 'Task has been closed successfully!');
+        return redirect('/tasks/');
     }
 
 }

@@ -3,48 +3,52 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
+        @include('include.messages')
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 {{ $task->name }}
             </div>
             <div class="panel-body">
                 <ul>
-                    @if ($task->description != null)
                     <li>
-                        <b>Description : </b>{{$task->description}}
-                    </li>
-                    @endif
-                    <li>
-                        <b>Project : </b>{{$task->project->name}}
+                        <b>Description : </b>
+                        {{ $task->description }}
                     </li>
                     <li>
-                        <b>Start at : </b>{{$task->start_at}}
+                        <b>Project : </b>
+                        <a href="{{ route('projects.show', ['id' => $task->project->id]) }}">{{ $task->project->name }}</a>
                     </li>
                     <li>
-                        <b>End at : </b>{{$task->end_at}}
+                        <b>Start at : </b>
+                        {{ $task->start_at }}
+                    </li>
+                    <li>
+                        <b>End at : </b>
+                        {{ $task->end_at }}
                     </li>
                     <li>
                         <b>Assigned to : </b>
-                        @if(!$task->user->trashed())
-                        {{ $task->user->fullName() }}
-                        @else
-                        <del>{{ $task->user()->withTrashed()->first()->fullName() }}</del>
-                        @endif
+                        <a href="{{ route('users.show', ['id' => $task->user->id]) }}">{{ $task->user->fullName() }}</a>
                     </li>
                     <li>
-                        <b>Status : </b>{{$task->status}}
+                        <b>Status : </b>
+                        {{ $task->status }}
                     </li>
                 </ul>
+
                 <br>
-                @include('include.errors')
                 <form action="/comments" method="POST" class="form-horizontal">
                     {{ csrf_field() }}
-                    <div class="form-group">
+
+                    <div class="form-group{{ $errors->has('content') ? ' has-error' : '' }}">
                         <div class="col-sm-offset-1 col-sm-10">
                             <textarea class="form-control" rows="3" name="content" id="content" placeholder="New comment..."></textarea>
                         </div>
                     </div>
+
                     <input type="hidden" name="task_id" id="task_id" class="form-control" value="{{ $task->id }}">
+
                     <div class="form-group">
                         <div class="col-sm-11">
                             <button type="submit" class="btn btn-default pull-right">
@@ -69,21 +73,19 @@
                                 {{ $comment->content }}
                             </td>
                             <td>
-                                @if(!$comment->user->trashed())
-                                {{ $comment->user->fullName() }}
-                                @else
-                                <del>{{ $comment->user()->withTrashed()->first()->fullName() }}</del>
-                                @endif
+                                <a href="{{ route('users.show', ['id' => $comment->user->id]) }}">{{ $comment->user->fullName() }}</a>
                             </td>
                             <td>
                                 {{ $comment->created_at }}
                             </td>
                             <td>
+                                @if ($comment->canDestroy(Auth::user()))
                                 <form action="/comments/{{ $comment->id }}" method="POST">
                                     {{ csrf_field() }}
                                     {{ method_field('DELETE') }}
                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="{{ $comment->content }}" data-target="#confirm-delete">Delete</button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
@@ -92,14 +94,18 @@
                 @endif
             </div>
             <div class="panel-footer">
+                @if ($task->canDestroy(Auth::user()))
                 <form action="/tasks/{{ $task->id }}" method="POST">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
                     <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-item-to-delete="{{ $task->name }}" data-target="#confirm-delete">Delete</button>
                 </form>
+                @endif
+                @if ($task->canEdit(Auth::user()))
                 <form action="/tasks/{{ $task->id }}/edit" method="GET">
                     <button type="submit" class="btn btn-default">Edit</button>
                 </form>
+                @endif
             </div>
         </div>
 

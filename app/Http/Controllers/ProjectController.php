@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditProjectRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Project;
 use App\User;
@@ -25,11 +26,12 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        // TODO : Find why this doesn't work....(only the user who created the project can see it...)
-        $projects = Project::has('users')->where('user_id', Auth::id())->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
+        $myprojects = Project::where('user_id', '=', Auth::id())->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
+        $projects = Auth::user()->projects()->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
         $users = User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get()->except(Auth::id());
 
         return view('projects.index', [
+            'myprojects' => $myprojects,
             'projects' => $projects,
             'users' => $users,
         ]);
@@ -59,9 +61,10 @@ class ProjectController extends Controller {
         } else {
             $users = Input::get('users');
         }
-        array_push($users, Auth::id());
+        array_push($users, Auth::id()); // Automatically add the authenticated user.
         $project->users()->sync($users);
 
+        $request->session()->flash('alert-success', 'Project has been created successfully!');
         return redirect('/projects/' . $project->id);
     }
 
@@ -72,6 +75,10 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show(Project $project) {
+        if (!$project->canShow(Auth::user())) {
+            abort(403, 'Access denied');
+        }
+
         return view('projects.show', [
             'project' => $project,
         ]);
@@ -84,6 +91,10 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Project $project) {
+        if (!$project->canEdit(Auth::user())) {
+            abort(403, 'Access denied');
+        }
+
         $users = User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get()->except(Auth::id());
 
         return view('projects.edit', [
@@ -95,15 +106,11 @@ class ProjectController extends Controller {
     /**
      * Update the specified resource in storage.
      *
-     * @param  StoreProjectRequest  $request
+     * @param  EditProjectRequest  $request
      * @param  \App\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreProjectRequest $request, Project $project) {
-        if (!$project->canEdit(Auth::user())) {
-            abort(403, 'Access denied');
-        }
-
+    public function update(EditProjectRequest $request, Project $project) {
         $projects = Project::findOrFail($project->id);
         $projects->name = $request->name;
         $projects->description = $request->description;
@@ -117,9 +124,10 @@ class ProjectController extends Controller {
         } else {
             $users = Input::get('users');
         }
-        array_push($users, Auth::id());
+        array_push($users, Auth::id()); // Automatically add the authenticated user.
         $project->users()->sync($users);
 
+        $request->session()->flash('alert-success', 'Project has been updated successfully!');
         return redirect('/projects/' . $project->id);
     }
 
@@ -135,6 +143,8 @@ class ProjectController extends Controller {
         }
 
         Project::findOrFail($project->id)->delete();
+
+        session()->flash('alert-success', 'Project has been deleted successfully!');
         return redirect('/projects');
     }
 

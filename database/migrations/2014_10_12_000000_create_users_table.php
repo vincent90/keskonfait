@@ -18,13 +18,14 @@ class CreateUsersTable extends Migration {
             $table->string('last_name');
             $table->string('phone_number');
             $table->string('user_image')->nullable();
-            $table->string('discord_account')->nullable();
+            $table->string('discord_user')->nullable();
+            $table->string('discord_channel')->nullable();
             $table->string('email')->unique();
             $table->boolean('superuser')->default(false);
+            $table->boolean('active')->default(true);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

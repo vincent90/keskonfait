@@ -25,7 +25,7 @@ class CreateTasksTable extends Migration {
 
             $table->enum('status', ['Open', 'Closed']);
 
-            $table->integer('project_id')->unsigned()->nullable();
+            $table->integer('project_id')->unsigned()->nullable()->index();
             $table->foreign('project_id')->references('id')
                     ->on('projects')->onDelete('cascade');
 

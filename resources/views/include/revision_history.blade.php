@@ -6,17 +6,9 @@
         <div class="panel-body">
             @foreach($revisionHistory as $history)
             @if($history->key == 'created_at' && !$history->old_value)
-            @if($history->userResponsible() != null)
-            <li><b>{{ $history->userResponsible()->fullName() }}</b> created this resource at {{ $history->newValue() }}</li>
+            <li ><strong>{{ $history->userResponsible()->fullName() }}</strong> created this resource at {{ $history->newValue() }}</li>
             @else
-            <li><b>DELETED</b> created this resource at {{ $history->newValue() }}</li>
-            @endif
-            @else
-            @if($history->userResponsible() != null)
-            <li><b>{{ $history->userResponsible()->fullName() }}</b> changed {{ $history->fieldName() }} from {{ $history->oldValue() }} to {{ $history->newValue() }} at {{ $history->created_at}}</li>
-            @else
-            <li><b>DELETED</b> changed {{ $history->fieldName() }} from {{ $history->oldValue() }} to {{ $history->newValue() }} at {{ $history->created_at}}</li>
-            @endif
+            <li><strong>{{ $history->userResponsible()->fullName() }}</strong> changed {{ $history->fieldName() }} from <strong>{{ $history->oldValue() }}</strong> to <strong>{{ $history->newValue() }}</strong> at {{ $history->created_at}}</li>
             @endif
             @endforeach
         </div>

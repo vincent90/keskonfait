@@ -2,20 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable {
-
-    use SoftDeletes;
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
 
     use Notifiable;
 
@@ -25,7 +15,7 @@ class User extends Authenticatable {
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'phone_number', 'user_image', 'discord_account', 'email', 'superuser', 'password',
+        'first_name', 'last_name', 'phone_number', 'user_image', 'discord_user', 'discord_channel', 'email', 'superuser', 'active', 'password',
     ];
 
     /**
@@ -43,8 +33,25 @@ class User extends Authenticatable {
      * @return type
      */
     public function projects() {
-//        return $this->hasMany('App\Project');
         return $this->belongsToMany('App\Project')->withTimestamps();
+    }
+
+    /**
+     * The notifications are sent to this Discord channel.
+     *
+     * @return type
+     */
+    public function routeNotificationForDiscord() {
+        return $this->discord_channel;
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @return string
+     */
+    public function routeNotificationForMail() {
+        return $this->email;
     }
 
     /**

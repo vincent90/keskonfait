@@ -1,7 +1,5 @@
 <?php
 
-use App\Task;
-
 /*
   |--------------------------------------------------------------------------
   | Web Routes
@@ -26,10 +24,14 @@ Auth::routes();
 Route::resource('comments', 'CommentController', ['except' => [
         'index', 'create', 'show', 'edit', 'update',
 ]]);
+
 Route::resource('projects', 'ProjectController', ['except' => [
         'create',
 ]]);
+
+Route::put('tasks/{task}/close', 'TaskController@close');
 Route::resource('tasks', 'TaskController', ['except' => [
         'create',
 ]]);
+
 Route::resource('users', 'UserController');

@@ -7,14 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model {
 
-    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id'];
-    protected $revisionCreationsEnabled = true;
-
     use \Venturecraft\Revisionable\RevisionableTrait;
 
-    public static function boot() {
-        parent::boot();
-    }
+    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id'];
+    protected $revisionCreationsEnabled = true;
 
     /**
      * Return true if the user can see the project. Any user assigned to a project can see the project's details.
@@ -23,7 +19,7 @@ class Project extends Model {
      * @return boolean
      */
     public function canShow(User $user) {
-        return collect($this->userIds())->contains($user->id);
+        return $this->users->pluck('id')->contains($user->id);
     }
 
     /**
@@ -37,6 +33,16 @@ class Project extends Model {
     }
 
     /**
+     * Return true if the user can add task.
+     *
+     * @param User $user
+     * @return type
+     */
+    public function canAddTasks(User $user) {
+        return $this->users->pluck('id')->contains($user->id);
+    }
+
+    /**
      * Return true if the user can destroy the project. Only the project manager can destroy the project.
      *
      * @param User $user
@@ -47,7 +53,7 @@ class Project extends Model {
     }
 
     /**
-     * Get the users assigned to the project.
+     * Get the users in the project.
      *
      * @return type
      */
@@ -71,15 +77,6 @@ class Project extends Model {
      */
     public function tasks() {
         return $this->hasMany('App\Task');
-    }
-
-    /**
-     * Get a list of ids for all users assigned to the project.
-     *
-     * @return type
-     */
-    public function userIds() {
-        return $this->users->pluck('id');
     }
 
     /**
