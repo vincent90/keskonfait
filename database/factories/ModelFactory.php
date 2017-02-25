@@ -50,29 +50,13 @@ $factory->defineAs(App\User::class, 'inactive', function (Faker\Generator $faker
  * Generate a fake project.
  */
 $factory->define(App\Project::class, function (Faker\Generator $faker) {
-    $start_at = Carbon::today()->addDays(rand(0, 5));
-    $end_at = Carbon::today()->addWeeks(rand(6, 10));
+    $start_at = (new Carbon())->addDays(rand(0, 30));
+    $end_at = $start_at->copy()->addDays(rand(60, 80));
 
     return [
-        'name' => $faker->sentence(rand(3, 8)),
-        'description' => $faker->sentence(rand(1, 5)),
-        'start_at' => $start_at,
-        'end_at' => $end_at,
-    ];
-});
-
-/**
- * Generate a fake root task.
- */
-$factory->define(App\Task::class, function (Faker\Generator $faker) {
-    $start_at = Carbon::today()->addDays(rand(6, 9));
-    $end_at = Carbon::today()->addWeeks(rand(1, 3));
-
-    return [
-        'name' => $faker->sentence(rand(3, 8)),
-        'description' => $faker->sentence(rand(1, 5)),
-        'start_at' => $start_at,
-        'end_at' => $end_at,
-        'status' => 'Open'
+        'name' => $faker->sentence(rand(5, 15)),
+        'description' => $faker->sentence(rand(0, 100)),
+        'start_at' => $start_at->toDateString(),
+        'end_at' => $end_at->toDateString(),
     ];
 });

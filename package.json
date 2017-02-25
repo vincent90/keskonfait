@@ -18,6 +18,7 @@
         "vue-resource": "^1.0.3"
     },
     "dependencies": {
-        "bootstrap-datepicker": "^1.6.4"
+        "bootstrap-datepicker": "^1.6.4",
+        "laravel-elixir-vue-2": "^0.2.0"
     }
 }

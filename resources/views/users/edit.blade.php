@@ -3,13 +3,14 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
+        @include('include.messages')
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 Edit user
             </div>
-            <div class="panel-body">
-                @include('include.messages')
 
+            <div class="panel-body">
                 <form action="/users/{{$user->id}}" method="POST" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
@@ -36,7 +37,7 @@
                     </div>
 
                     <div class="form-group{{ $errors->has('user_image') ? ' has-error' : '' }}">
-                        <label for="user_image" class="col-sm-3 control-label">User image</label>
+                        <label for="user_image" class="col-sm-3 control-label">New user image</label>
                         <div class="col-sm-6">
                             <input type="file" name="user_image" id="user_image" class="form-control" value="{{ old('user_image', $user->user_image) }}" accept="image/gif, image/jpeg, image/png">
                         </div>

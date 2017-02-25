@@ -13,7 +13,7 @@ class Task extends Node {
     protected $revisionCreationsEnabled = true;
 
     /**
-     * Return true if the user can see the task. Any user assigned to a project can see the project's tasks.
+     * A user assigned to a project can see all the project tasks.
      *
      * @param User $user
      * @return boolean
@@ -23,7 +23,7 @@ class Task extends Node {
     }
 
     /**
-     * Return true if the user can edit the task.
+     * Only the project manager or the user assigned to the task can edit the task.
      *
      * @param User $user
      * @return type
@@ -33,7 +33,7 @@ class Task extends Node {
     }
 
     /**
-     * Return true if the user can destroy the task. Only the project manager can destroy a task.
+     * Only the project manager can destroy the task.
      *
      * @param User $user
      * @return type
@@ -43,17 +43,17 @@ class Task extends Node {
     }
 
     /**
-     * If a user can see a task, he can also comment it.
+     * A user assigned to a project can comment on all the project tasks.
      *
      * @param User $user
      * @return boolean
      */
     public function canComment(User $user) {
-        return $this->canShow($user);
+        return $this->project->canShow($user);
     }
 
     /**
-     * Recursively find the project.
+     * Recursively find the project for the task.
      *
      * @return type
      */
@@ -81,7 +81,7 @@ class Task extends Node {
     }
 
     /**
-     * Get the comments for the task.
+     * Get all comments for the task.
      *
      * @return type
      */
@@ -90,7 +90,7 @@ class Task extends Node {
     }
 
     /**
-     * Used by VentureCraft/Revisionable.
+     * Used by VentureCraft/Revisionable instead of the model foreign key.
      *
      * @return type
      */

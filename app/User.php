@@ -15,7 +15,7 @@ class User extends Authenticatable {
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'phone_number', 'user_image', 'discord_user', 'discord_channel', 'email', 'superuser', 'active', 'password',
+        'first_name', 'last_name', 'phone_number', 'user_image', 'discord_user', 'discord_channel', 'email', 'superuser', 'active',
     ];
 
     /**
@@ -28,6 +28,15 @@ class User extends Authenticatable {
     ];
 
     /**
+     * Return the full name of the user.
+     *
+     * @return type
+     */
+    public function fullName() {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    /**
      * Get the user's projects.
      *
      * @return type
@@ -37,7 +46,7 @@ class User extends Authenticatable {
     }
 
     /**
-     * The notifications are sent to this Discord channel.
+     * Route notifications for the Discord channel.
      *
      * @return type
      */
@@ -55,7 +64,7 @@ class User extends Authenticatable {
     }
 
     /**
-     * Get the user's tasks.
+     * Get all the user tasks.
      *
      * @return type
      */
@@ -64,21 +73,12 @@ class User extends Authenticatable {
     }
 
     /**
-     * Used by VentureCraft/Revisionable.
+     * Used by VentureCraft/Revisionable instead of the model foreign key.
      *
      * @return type
      */
     public function identifiableName() {
         return $this->fullName();
-    }
-
-    /**
-     * Return the full name of the user.
-     *
-     * @return type
-     */
-    public function fullName() {
-        return $this->first_name . ' ' . $this->last_name;
     }
 
 }

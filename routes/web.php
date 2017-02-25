@@ -34,4 +34,6 @@ Route::resource('tasks', 'TaskController', ['except' => [
         'create',
 ]]);
 
+Route::get('users/{user}/edit_password', 'UserController@editPassword');
+Route::put('users/{user}/edit_password', 'UserController@updatePassword');
 Route::resource('users', 'UserController');

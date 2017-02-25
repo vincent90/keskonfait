@@ -32,7 +32,11 @@
                         <ul>
                             @foreach($project->users()->orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get() as $user)
                             <li>
+                                @if($user->active)
                                 <a href="{{ route('users.show', ['id' => $user->id]) }}">{{ $user->fullName() }}</a>
+                                @else
+                                <del><a href="{{ route('users.show', ['id' => $user->id]) }}">{{ $user->fullName() }}</a></del>
+                                @endif
                             </li>
                             @endforeach
                         </ul>
@@ -114,7 +118,7 @@
                             <select class="form-control" name="user_id" id="user_id">
                                 @if ($project->users->count() > 0)
                                 @foreach($project->users()->orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get() as $user)
-                                <option value="{{$user->id}}" @if (old('user_id') == $user->id) selected="selected" @endif>{{ $user->fullName() }}</option>
+                                <option value="{{$user->id}}" @if (old('user_id') == $user->id) selected="selected" @endif>{{ $user->fullName() }} @if(!$user->active) - [INACTIVE ACCOUNT]@endif</option>
                                 @endforeach
                                 @endif
                             </select>
@@ -196,7 +200,11 @@ echo '<tr>';
         echo $task->end_at;
         echo '</td>';
     echo '<td>';
+        if($task->user->active) {
         echo '<a href="' . route('users.show', ['id' => $task->user->id]) . '">' . $task->user->fullName() . '</a>';
+        }   else {
+        echo '<del><a href="' . route('users.show', ['id' => $task->user->id]) . '">' . $task->user->fullName() . '</a></del>';
+        }
         echo '</td>';
     echo '<td>';
         echo $task->status;

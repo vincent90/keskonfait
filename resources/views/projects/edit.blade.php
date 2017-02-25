@@ -3,13 +3,14 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
+        @include('include.messages')
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 Edit project
             </div>
-            <div class="panel-body">
-                @include('include.messages')
 
+            <div class="panel-body">
                 <form action="/projects/{{$project->id}}" method="POST" class="form-horizontal">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
@@ -50,7 +51,7 @@
                             <select multiple class="form-control" name="users[]" id="users[]">
                                 @if ($users->count() > 0)
                                 @foreach($users as $user)
-                                <option value="{{$user->id}}" {{ (collect(old('users', $project->users->pluck('id')))->contains($user->id)) ? 'selected':'' }}>{{ $user->fullName() }}</option>
+                                <option value="{{$user->id}}" {{ (collect(old('users', $project->users->pluck('id')))->contains($user->id)) ? 'selected':'' }}>{{ $user->fullName()}} @if(!$user->active) - [INACTIVE ACCOUNT]@endif</option>
                                 @endforeach
                                 @endif
                             </select>

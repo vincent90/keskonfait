@@ -9,6 +9,7 @@
             <div class="panel-heading">
                 {{ $task->name }}
             </div>
+
             <div class="panel-body">
                 <ul>
                     <li>
@@ -29,7 +30,12 @@
                     </li>
                     <li>
                         <b>Assigned to : </b>
-                        <a href="{{ route('users.show', ['id' => $task->user->id]) }}">{{ $task->user->fullName() }}</a>
+                        @if ($task->user->active)
+                        <a href="{{ route('users.show', ['id' => $task->user->id]) }}">{{ $task->user->fullName() }}</a> ->
+                        @else
+                        <del><a href="{{ route('users.show', ['id' => $task->user->id]) }}">{{ $task->user->fullName() }}</a></del> ->
+                        @endif
+                        <a href="mailto:'{{ $task->user->email }}'?Subject=About the task : '{{ $task->name }}'" target="_top">Send him/her an email</a>
                     </li>
                     <li>
                         <b>Status : </b>
@@ -57,6 +63,7 @@
                         </div>
                     </div>
                 </form>
+
                 <br>
                 @if ($task->comments->count() > 0)
                 <table class="table table-striped">
@@ -73,7 +80,11 @@
                                 {{ $comment->content }}
                             </td>
                             <td>
+                                @if ($comment->user->active)
                                 <a href="{{ route('users.show', ['id' => $comment->user->id]) }}">{{ $comment->user->fullName() }}</a>
+                                @else
+                                <del><a href="{{ route('users.show', ['id' => $comment->user->id]) }}">{{ $comment->user->fullName() }}</a></del>
+                                @endif
                             </td>
                             <td>
                                 {{ $comment->created_at }}
@@ -93,6 +104,7 @@
                 </table>
                 @endif
             </div>
+
             <div class="panel-footer">
                 @if ($task->canDestroy(Auth::user()))
                 <form action="/tasks/{{ $task->id }}" method="POST">

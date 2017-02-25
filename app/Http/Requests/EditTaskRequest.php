@@ -3,10 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Project;
-use App\Task;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Lang;
 
 class EditTaskRequest extends FormRequest {
 
@@ -44,29 +44,30 @@ class EditTaskRequest extends FormRequest {
     public function withValidator(Validator $validator) {
         $validator->after(function ($validator) {
             $input = $this->all();
+
             if ($input['start_at'] != '' && $input['end_at'] != '') {
                 if ($input['start_at'] > $input['end_at']) {
-                    $validator->errors()->add('start_at', 'End date must be greater than or equal to start date.');
-                    $validator->errors()->add('end_at', 'End date must be greater than or equal to start date.');
-                }
-
-                $parentTask = $this->route('task')->parent;
-
-                if ($parentTask != null) {
-                    if ($input['start_at'] < $parentTask->start_at) {
-                        $validator->errors()->add('start_at', 'End date must be greater than or equal to the project start date.');
-                    }
-                    if ($input['end_at'] > $parentTask->end_at) {
-                        $validator->errors()->add('end_at', 'End date must be greater than or equal to the project start date.');
-                    }
+                    $validator->errors()->add('start_at', 'Start date must be lesser than or equal to the end date.');
+                    $validator->errors()->add('end_at', 'End date must be greater than or equal to the start date.');
                 } else {
-                    $project = Project::findOrFail($input['project_id']);
+                    $parentTask = $this->route('task')->parent;
 
-                    if ($input['start_at'] < $project->start_at) {
-                        $validator->errors()->add('start_at', 'End date must be greater than or equal to the parent task start date.');
-                    }
-                    if ($input['end_at'] > $project->end_at) {
-                        $validator->errors()->add('end_at', 'End date must be greater than or equal to the parent task start date.');
+                    if ($parentTask != null) {
+                        if ($input['start_at'] < $parentTask->start_at) {
+                            $validator->errors()->add('start_at', 'Start date must be greater than or equal to the parent task start date.');
+                        }
+                        if ($input['end_at'] > $parentTask->end_at) {
+                            $validator->errors()->add('end_at', 'End date must be lesser than or equal to the parent task end date.');
+                        }
+                    } else {
+                        $project = Project::findOrFail($input['project_id']);
+
+                        if ($input['start_at'] < $project->start_at) {
+                            $validator->errors()->add('start_at', 'Start date must be greater than or equal to the project start date.');
+                        }
+                        if ($input['end_at'] > $project->end_at) {
+                            $validator->errors()->add('end_at', 'End date must be lesser than or equal to the project end date.');
+                        }
                     }
                 }
             }

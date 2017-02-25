@@ -56,8 +56,8 @@ use AuthenticatesUsers;
      * @return \Illuminate\Http\RedirectResponse
      */
     protected function sendFailedLoginResponse(Request $request) {
-        if (User::where('email', '=', Input::get('email'))->count() > 0) {
-            $message = 'This account has been deactivated.';
+        if (User::where('email', Input::get('email'))->where('active', 0)->count() > 0) {
+            $message = Lang::get('auth.account_deactivated');
         }
 
         return redirect()->back()

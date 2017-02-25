@@ -6,6 +6,7 @@ use App\Http\Requests\EditTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
 use App\Task;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 
 class TaskController extends Controller {
 
@@ -58,7 +59,7 @@ class TaskController extends Controller {
                         'project_id' => $request->project_id,
             ]);
         } else {
-            $rootTask = Task::findOrFail($request->task_id);
+            $rootTask = Task::where('id', $request->task_id)->first();
             $task = $rootTask->children()->create([
                 'name' => $request->name,
                 'description' => $request->description,
@@ -69,7 +70,7 @@ class TaskController extends Controller {
             ]);
         }
 
-        session()->flash('alert-success', 'Task has been created successfully!');
+        session()->flash('alert-success', Lang::get('controller.store_task'));
         return redirect('/projects/' . $request->project_id);
     }
 
@@ -122,7 +123,7 @@ class TaskController extends Controller {
         $task->status = $request->status;
         $task->save();
 
-        session()->flash('alert-success', 'Task has been updated successfully!');
+        session()->flash('alert-success', Lang::get('controller.edit_task'));
         return redirect('/tasks/' . $task->id);
     }
 
@@ -140,7 +141,7 @@ class TaskController extends Controller {
         $project = $task->project;
         Task::findOrFail($task->id)->delete();
 
-        session()->flash('alert-success', 'Task has been deleted successfully!');
+        session()->flash('alert-success', Lang::get('controller.destroy_task'));
         return redirect('/projects/' . $project->id);
     }
 
@@ -159,8 +160,8 @@ class TaskController extends Controller {
         $task->status = 'Closed';
         $task->save();
 
-        session()->flash('alert-success', 'Task has been closed successfully!');
-        return redirect('/tasks/');
+        return redirect()->back()->with('alert-success', Lang::get('controller.close_task'));
+        ;
     }
 
 }

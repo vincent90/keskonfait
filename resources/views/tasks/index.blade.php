@@ -3,10 +3,13 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
+        @include('include.messages')
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 My tasks
             </div>
+
             <div class="panel-body">
                 @if ($tasks->count() > 0)
                 <table class="table table-striped">

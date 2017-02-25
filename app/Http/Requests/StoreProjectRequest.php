@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Lang;
 
 class StoreProjectRequest extends FormRequest {
 
@@ -31,7 +32,7 @@ class StoreProjectRequest extends FormRequest {
     }
 
     /**
-     * Get all of the input and files for the request.
+     * Automatically add the authenticated user id.
      *
      * @return array
      */
@@ -51,9 +52,12 @@ class StoreProjectRequest extends FormRequest {
     public function withValidator(Validator $validator) {
         $validator->after(function ($validator) {
             $input = $this->all();
-            if ($input['start_at'] > $input['end_at']) {
-                $validator->errors()->add('start_at', 'End date must be greater than or equal to start date.');
-                $validator->errors()->add('end_at', 'End date must be greater than or equal to start date.');
+
+            if ($input['start_at'] != '' && $input['end_at'] != '') {
+                if ($input['start_at'] > $input['end_at']) {
+                    $validator->errors()->add('start_at', Lang::get('validation.start_at_must_be_smaller_than_end_at'));
+                    $validator->errors()->add('end_at', Lang::get('validation.end_at_must_be_greater_than_start_at'));
+                }
             }
         });
     }

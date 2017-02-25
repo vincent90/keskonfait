@@ -9,6 +9,7 @@
             <div class="panel-heading">
                 All users
             </div>
+
             <div class="panel-body">
                 @if ($users->count() > 0)
                 <table class="table table-striped">
@@ -28,7 +29,11 @@
                                     @if ($user->user_image)
                                     <img src="{{URL::asset('images/' . $user->user_image)}}" alt="User image">
                                     @endif
+                                    @if ($user->active)
                                     {{ $user->fullName() }}
+                                    @else
+                                    <del>{{ $user->fullName() }}</del>
+                                    @endif
                                 </a>
                             </td>
                             <td>
@@ -38,7 +43,7 @@
                                 {{ $user->discord_user }}
                             </td>
                             <td>
-                                {{ $user->email }}
+                                <a href="mailto:'{{ $user->email }}'" target="_top">{{ $user->email }}</a>
                             </td>
                             <td>
                                 <form action="/users/{{ $user->id }}/edit" method="GET">
@@ -46,11 +51,13 @@
                                 </form>
                             </td>
                             <td>
+                                @if ($user->active)
                                 <form action="/users/{{ $user->id }}" method="POST">
                                     {{ csrf_field() }}
                                     {{ method_field('DELETE') }}
                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="{{ $user->fullName() }}" data-target="#confirm-delete">Delete</button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

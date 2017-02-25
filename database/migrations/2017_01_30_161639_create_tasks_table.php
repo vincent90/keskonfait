@@ -18,17 +18,13 @@ class CreateTasksTable extends Migration {
             $table->text('description')->nullable();
             $table->date('start_at');
             $table->date('end_at');
-
-            $table->integer('user_id')->unsigned();
+            $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')
                     ->on('users')->onDelete('cascade');
-
             $table->enum('status', ['Open', 'Closed']);
-
             $table->integer('project_id')->unsigned()->nullable()->index();
             $table->foreign('project_id')->references('id')
                     ->on('projects')->onDelete('cascade');
-
             $table->integer('parent_id')->nullable()->index();
             $table->integer('lft')->nullable()->index();
             $table->integer('rgt')->nullable()->index();

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EditProjectRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Project;
+use App\Task;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Lang;
 
 class ProjectController extends Controller {
 
@@ -26,12 +28,12 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $myprojects = Project::where('user_id', '=', Auth::id())->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
+        $myProjects = Project::where('user_id', Auth::id())->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
         $projects = Auth::user()->projects()->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
         $users = User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get()->except(Auth::id());
 
         return view('projects.index', [
-            'myprojects' => $myprojects,
+            'myprojects' => $myProjects,
             'projects' => $projects,
             'users' => $users,
         ]);
@@ -64,7 +66,7 @@ class ProjectController extends Controller {
         array_push($users, Auth::id()); // Automatically add the authenticated user.
         $project->users()->sync($users);
 
-        $request->session()->flash('alert-success', 'Project has been created successfully!');
+        $request->session()->flash('alert-success', Lang::get('controller.store_project'));
         return redirect('/projects/' . $project->id);
     }
 
@@ -127,7 +129,7 @@ class ProjectController extends Controller {
         array_push($users, Auth::id()); // Automatically add the authenticated user.
         $project->users()->sync($users);
 
-        $request->session()->flash('alert-success', 'Project has been updated successfully!');
+        $request->session()->flash('alert-success', Lang::get('controller.edit_project'));
         return redirect('/projects/' . $project->id);
     }
 
@@ -142,9 +144,14 @@ class ProjectController extends Controller {
             abort(403, 'Access denied');
         }
 
+        $children = Task::root()->where('project_id', $project->id)->get();
+        foreach ($children as $t) {
+            $t->delete();
+        }
+
         Project::findOrFail($project->id)->delete();
 
-        session()->flash('alert-success', 'Project has been deleted successfully!');
+        session()->flash('alert-success', Lang::get('controller.destroy_project'));
         return redirect('/projects');
     }
 

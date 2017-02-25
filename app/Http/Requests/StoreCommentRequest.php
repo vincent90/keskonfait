@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class StoreCommentRequest extends FormRequest {
 
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine if the user is authorized to comment the task.
      *
      * @return bool
      */
@@ -32,7 +32,7 @@ class StoreCommentRequest extends FormRequest {
     }
 
     /**
-     * Get all of the input and files for the request.
+     * Automatically add the authenticated user id to the request inputs.
      *
      * @return array
      */

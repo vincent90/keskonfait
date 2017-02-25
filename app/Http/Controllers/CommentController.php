@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Comment;
 use App\Http\Requests\StoreCommentRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 
 class CommentController extends Controller {
 
@@ -34,7 +35,7 @@ class CommentController extends Controller {
      */
     public function store(StoreCommentRequest $request) {
         $comment = Comment::create($request->all());
-        $request->session()->flash('alert-success', 'Comment has been created successfully!');
+        $request->session()->flash('alert-success', Lang::get('controller.store_comment'));
         return redirect('/tasks/' . $comment->task->id);
     }
 
@@ -84,7 +85,7 @@ class CommentController extends Controller {
 
         Comment::findOrFail($comment->id)->delete();
 
-        session()->flash('alert-success', 'Comment has been deleted successfully!');
+        session()->flash('alert-success', Lang::get('controller.destroy_comment'));
         return redirect('/tasks/' . $task->id);
     }
 

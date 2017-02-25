@@ -3,13 +3,14 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
+        @include('include.messages')
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 New user
             </div>
-            <div class="panel-body">
-                @include('include.messages')
 
+            <div class="panel-body">
                 <form action="/users" method="POST" class="form-horizontal" enctype="multipart/form-data">
                     {{ csrf_field() }}
 
@@ -68,6 +69,16 @@
                             <select class="form-control" name="superuser" id="superuser">
                                 <option value="1" @if (old('superuser') == 1) selected="selected" @endif>True</option>
                                 <option value="0"  @if (old('superuser') == 0) selected="selected" @endif>False</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group{{ $errors->has('active') ? ' has-error' : '' }}">
+                        <label for="active" class="col-sm-3 control-label">* Active</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" name="active" id="active">
+                                <option value="1" @if (old('active') == 1) selected="selected" @endif>True</option>
+                                <option value="0"  @if (old('active') == 0) selected="selected" @endif>False</option>
                             </select>
                         </div>
                     </div>

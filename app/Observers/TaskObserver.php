@@ -8,7 +8,7 @@ use App\Task;
 class TaskObserver {
 
     /**
-     * Send a notification to user assigned to the task.
+     * Send a notification to the user assigned to the task.
      *
      * @param  Task  $task
      * @return void

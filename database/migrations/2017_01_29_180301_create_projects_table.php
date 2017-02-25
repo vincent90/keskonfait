@@ -18,7 +18,7 @@ class CreateProjectsTable extends Migration {
             $table->text('description')->nullable();
             $table->date('start_at');
             $table->date('end_at');
-            $table->integer('user_id')->unsigned();
+            $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')
                     ->on('users')->onDelete('cascade');
             $table->timestamps();

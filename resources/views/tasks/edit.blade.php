@@ -3,12 +3,14 @@
 @section('content')
 <div class="row">
     <div class="col-sm-offset-2 col-md-8">
+        @include('include.messages')
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 Edit task
             </div>
+
             <div class="panel-body">
-                @include('include.messages')
 
                 <form action="/tasks/{{$task->id}}" method="POST" class="form-horizontal">
                     {{ csrf_field() }}
@@ -52,7 +54,7 @@
                             <select class="form-control" name="user_id" id="user_id">
                                 @if ($task->project->users->count() > 0)
                                 @foreach($task->project->users()->orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get() as $user)
-                                <option value="{{$user->id}}" @if (old('user_id') == $user->id) selected="selected" @endif>{{ $user->fullName() }}</option>
+                                <option value="{{$user->id}}" @if (old('user_id', $task->user_id) == $user->id) selected="selected" @endif>{{ $user->fullName() }} @if(!$user->active) - [INACTIVE ACCOUNT]@endif</option>
                                 @endforeach
                                 @endif
                             </select>

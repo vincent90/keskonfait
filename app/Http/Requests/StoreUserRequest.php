@@ -4,16 +4,17 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Validation\Validator;
 
 class StoreUserRequest extends FormRequest {
 
     /**
-     * Determine if the user is authorized to make this request.
+     * Only a superuser can create a new user account.
      *
      * @return bool
      */
     public function authorize() {
-        // Only a superuser can create a user account.
         return Auth::user()->superuser;
     }
 
@@ -24,28 +25,37 @@ class StoreUserRequest extends FormRequest {
      */
     public function rules() {
         return [
-            'first_name' => 'required|max:255',
-            'last_name' => 'required|max:255',
+            'first_name' => 'required|max:60',
+            'last_name' => 'required|max:100',
             'phone_number' => 'required|max:30',
             'user_image' => 'max:255',
-            'discord_user' => 'max:255|unique:users',
-            'discord_channel' => 'max:255',
+            'discord_user' => 'max:50|unique:users',
+            'discord_channel' => 'max:50',
             'email' => 'required|email|max:255|unique:users',
             'superuser' => 'required',
+            'active' => 'required',
             'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6'
         ];
     }
 
     /**
-     * Get all of the input and files for the request.
+     * Configure the validator instance.
      *
-     * @return array
+     * @param  Validator  $validator
+     * @return void
      */
-    public function all() {
-        $input = parent::all();
-        $input['active'] = true;
-        $this->replace($input);
-        return parent::all();
+    public function withValidator(Validator $validator) {
+        $validator->after(function ($validator) {
+            $input = $this->all();
+
+            if ($input['discord_user'] != '' && $input['discord_channel'] == '') {
+                $validator->errors()->add('discord_channel', Lang::get('validation.discord_channel_missing'));
+            }
+            if ($input['discord_user'] == '' && $input['discord_channel'] != '') {
+                $validator->errors()->add('discord_user', Lang::get('validation.discord_user_missing'));
+            }
+        });
     }
 
 }

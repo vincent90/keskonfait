@@ -13,7 +13,7 @@ class Comment extends Model {
     protected $revisionCreationsEnabled = true;
 
     /**
-     * Return true if the user can destroy the comment. Only the project manager can destroy a comment.
+     * Only the project manager can destroy the comments.
      *
      * @param User $user
      * @return type
@@ -32,7 +32,7 @@ class Comment extends Model {
     }
 
     /**
-     * Get the task on which the comment was made.
+     * Get the task.
      *
      * @return type
      */
@@ -41,7 +41,7 @@ class Comment extends Model {
     }
 
     /**
-     * Used by VentureCraft/Revisionable.
+     * Used by VentureCraft/Revisionable instead of the model foreign key.
      *
      * @return type
      */

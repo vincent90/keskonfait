@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'discord_channel_missing' => 'If you entered a Discord user, you must also enter a Discord channel.',
+    'discord_user_missing' => 'If you entered a Discord channel, you must also enter a Discord user.',
+    'wrong_password' => 'Incorrect password.',
+    'superuser_missing' => 'The superuser field is required.',
+    'active_missing' => 'The active field is required.',
+    'start_at_must_be_smaller_than_end_at' => 'Start date must be lesser than or equal to the end date.',
+    'end_at_must_be_greater_than_start_at' => 'End date must be greater than or equal to the start date.',
+    'start_at_must_be_smaller_than_tasks_start_date' => 'Start date must be lesser than or equal to the start date of any of the tasks.',
+    'end_at_must_be_smaller_than_tasks_end_date' => 'End date must be greater than or equal to the end date of any of the tasks.',
     /*
       |--------------------------------------------------------------------------
       | Validation Language Lines
@@ -11,7 +20,6 @@ return [
       | as the size rules. Feel free to tweak each of these messages here.
       |
      */
-
     'accepted' => 'The :attribute must be accepted.',
     'active_url' => 'The :attribute is not a valid URL.',
     'after' => 'The :attribute must be a date after :date.',

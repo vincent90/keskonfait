@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\EditUserRequest;
+use App\Http\Requests\EditUserPasswordRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 use Image;
 
 class UserController extends Controller {
@@ -30,6 +32,7 @@ class UserController extends Controller {
         }
 
         $users = User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get();
+
         return view('users.index', [
             'users' => $users,
         ]);
@@ -77,7 +80,7 @@ class UserController extends Controller {
         }
         $user->save();
 
-        session()->flash('alert-success', 'User has been created successfully!');
+        session()->flash('alert-success', Lang::get('controller.store_user'));
         return redirect('/users/' . $user->id);
     }
 
@@ -142,7 +145,7 @@ class UserController extends Controller {
 
         $user->save();
 
-        session()->flash('alert-success', 'User has been edited successfully!');
+        session()->flash('alert-success', Lang::get('controller.edit_user'));
         return redirect('/users/' . $user->id);
     }
 
@@ -161,8 +164,40 @@ class UserController extends Controller {
         $user->active = false;
         $user->save();
 
-        session()->flash('alert-success', 'User has been deactivated successfully!');
+        session()->flash('alert-success', Lang::get('controller.destroy_user'));
         return redirect('/users');
+    }
+
+    /**
+     * Edit a user password.
+     *
+     * @param User $user
+     * @return type
+     */
+    public function editPassword(User $user) {
+        if (Auth::id() != $user->id) {
+            abort(403, 'Access denied');
+        }
+
+        return view('users.edit_password', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Update the new user password in storage.
+     *
+     * @param EditUserPasswordRequest $request
+     * @param User $user
+     * @return type
+     */
+    public function updatePassword(EditUserPasswordRequest $request, User $user) {
+        $user = User::findorfail($user->id);
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        session()->flash('alert-success', Lang::get('controller.update_password'));
+        return redirect('/users/' . $user->id);
     }
 
 }

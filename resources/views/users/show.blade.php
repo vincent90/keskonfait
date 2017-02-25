@@ -9,6 +9,7 @@
             <div class="panel-heading">
                 {{ $user->fullName() }}
             </div>
+
             <div class="panel-body">
                 <ul>
                     <li>
@@ -31,7 +32,7 @@
                     </li>
                     <li>
                         <b>Email : </b>
-                        {{ $user->email }}
+                        <a href="mailto:'{{ $user->email }}'" target="_top">{{ $user->email }}</a>
                     </li>
                     <li>
                         <b>Superuser : </b>
@@ -43,6 +44,7 @@
                     </li>
                 </ul>
             </div>
+
             <div class="panel-footer">
                 @if (Auth::user()->superuser)
                 <form action="/users/{{ $user->id }}" method="POST">

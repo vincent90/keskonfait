@@ -9,8 +9,8 @@
             <div class="panel-heading">
                 New project
             </div>
-            <div class="panel-body">
 
+            <div class="panel-body">
                 <form action="/projects" method="POST" class="form-horizontal">
                     {{ csrf_field() }}
 
@@ -50,7 +50,7 @@
                             <select multiple class="form-control" name="users[]" id="users[]">
                                 @if ($users->count() > 0)
                                 @foreach($users as $user)
-                                <option value="{{$user->id}}" {{ (collect(old('users'))->contains($user->id)) ? 'selected':'' }}>{{ $user->fullName()}}</option>
+                                <option value="{{$user->id}}" {{ (collect(old('users'))->contains($user->id)) ? 'selected':'' }}>{{ $user->fullName()}} @if(!$user->active) - [INACTIVE ACCOUNT]@endif</option>
                                 @endforeach
                                 @endif
                             </select>
@@ -69,7 +69,7 @@
             </div>
         </div>
 
-        @if (count($projects) > 0)
+        @if (count($myprojects) > 0)
         <div class="panel panel-default">
             <div class="panel-heading">
                 Projects I manage
@@ -141,7 +141,11 @@
                                 {{$project->end_at}}
                             </td>
                             <td>
+                                @if($project->user->active)
                                 {{$project->user->fullName() }}
+                                @else
+                                <del>{{$project->user->fullName() }}</del>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

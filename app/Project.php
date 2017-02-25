@@ -13,7 +13,7 @@ class Project extends Model {
     protected $revisionCreationsEnabled = true;
 
     /**
-     * Return true if the user can see the project. Any user assigned to a project can see the project's details.
+     * Any user assigned to the project can access the project's detail.
      *
      * @param User $user
      * @return boolean
@@ -23,7 +23,7 @@ class Project extends Model {
     }
 
     /**
-     * Return true if the user can edit the project. Only the project manager can edit the project.
+     * Only the project manager can edit the project.
      * 
      * @param User $user
      * @return boolean
@@ -33,7 +33,7 @@ class Project extends Model {
     }
 
     /**
-     * Return true if the user can add task.
+     * Any user assigned to the project can add new task in the project.
      *
      * @param User $user
      * @return type
@@ -43,7 +43,7 @@ class Project extends Model {
     }
 
     /**
-     * Return true if the user can destroy the project. Only the project manager can destroy the project.
+     * Only the project manager can destroy the project.
      *
      * @param User $user
      * @return type
@@ -53,7 +53,7 @@ class Project extends Model {
     }
 
     /**
-     * Get the users in the project.
+     * Get the users assigned to the project.
      *
      * @return type
      */
@@ -71,7 +71,7 @@ class Project extends Model {
     }
 
     /**
-     * Get all tasks and subtasks of the project.
+     * Get all root tasks of the project.
      *
      * @return type
      */
@@ -80,7 +80,7 @@ class Project extends Model {
     }
 
     /**
-     * Used by VentureCraft/Revisionable.
+     * Used by VentureCraft/Revisionable instead of the model foreign key.
      *
      * @return type
      */

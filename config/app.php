@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'enable_notifications' => env('ENABLE_NOTIFICATIONS', false),
     /*
       |--------------------------------------------------------------------------
       | Application Name
@@ -104,6 +103,17 @@ return [
      */
     'log' => env('APP_LOG', 'single'),
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
+    /*
+      |--------------------------------------------------------------------------
+      | Notification Configuration
+      |--------------------------------------------------------------------------
+      |
+      | Here you may configure the notification settings for your application.
+      | discord_channel_for_seeds is used by the User table seeder.
+      |
+     */
+    'discord_channel_for_seeds' => env('DISCORD_CHANNEL_FOR_SEEDS', ''),
+    'enable_notifications' => env('ENABLE_NOTIFICATIONS', false),
     /*
       |--------------------------------------------------------------------------
       | Autoloaded Service Providers

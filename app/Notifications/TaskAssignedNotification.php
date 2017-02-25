@@ -62,14 +62,25 @@ class TaskAssignedNotification extends Notification implements ShouldQueue {
         ];
     }
 
+    /**
+     * Get the Discord representation of the notification.
+     *
+     * @param type $notifiable
+     * @return type
+     */
     public function toDiscord($notifiable) {
         $url = route('tasks.show', ['id' => $this->task->id]);
+        $discord_channel = $this->task->user->discord_channel;
+        $discord_user = $this->task->user->discord_user;
+        $taskName = $this->task->name;
+        $userFullName = $this->task->user->fullName();
 
-        if ($this->task->user->discord_user != null) {
-            $msg = '<@' . $this->task->user->discord_user . '> has been assigned to the task : **' . $this->task->name . '** -> Link : ' . $url;
-        } else {
-            $msg = $this->task->user->fullName() . ' has been assigned to the task : **' . $this->task->name . '** -> Link : ' . $url;
+        if (!empty($discord_channel) && !empty($discord_user)) {
+            $msg = '<@' . $discord_user . '> has been assigned to the task : **' . $taskName . '** -> Link : ' . $url;
+        } else if (!empty($discord_channel)) {
+            $msg = $userFullName . ' has been assigned to the task : **' . $taskName . '** -> Link : ' . $url;
         }
+
         return DiscordMessage::create($msg);
     }
 
