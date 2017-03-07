@@ -28,12 +28,10 @@ class ProjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $myProjects = Project::where('user_id', Auth::id())->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
         $projects = Auth::user()->projects()->orderBy('start_at', 'asc')->orderBy('end_at', 'asc')->get();
         $users = User::orderBy('first_name', 'asc')->orderBy('last_name', 'asc')->get()->except(Auth::id());
 
         return view('projects.index', [
-            'myprojects' => $myProjects,
             'projects' => $projects,
             'users' => $users,
         ]);

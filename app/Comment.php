@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model {
 
+    protected $fillable = ['content', 'task_id', 'user_id'];
+
     use \Venturecraft\Revisionable\RevisionableTrait;
 
-    protected $fillable = ['content', 'task_id', 'user_id'];
     protected $revisionCreationsEnabled = true;
 
     /**

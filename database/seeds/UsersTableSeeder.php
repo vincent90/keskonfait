@@ -10,45 +10,29 @@ class UsersTableSeeder extends Seeder {
      * @return void
      */
     public function run() {
-        $discord_channel = config('app.discord_channel_for_seeds');
+        $discord_channel = config('app.discord_channel_for_seeded_users');
+        $discord_user_anthony = config('app.discord_user_for_seeded_user_anthony');
 
-        // Create a test account.
+        // create a test account for a developer
         factory(App\User::class, 'superuser')->create([
             'first_name' => 'Anthony',
             'last_name' => 'Martin Coallier',
-            'phone_number' => '(555) 555-5555',
-            'user_image' => '1.jpg',
-            'discord_user' => '269612768452280320',
+            'discord_user' => $discord_user_anthony,
             'discord_channel' => $discord_channel,
             'email' => 'anthony.martin-coallier.1@etsmtl.net',
-            'superuser' => true,
-            'active' => true,
-            'password' => bcrypt('123456'),
-        ])->each(function ($user) {
-            $user->projects()->saveMany(factory(App\Project::class, rand(2, 4))->make([
-                        'user_id' => $user->id,]));
-        });
+        ]);
 
-        // Create 15 normal users and a few projects for each.
+        // create 15 normal user accounts
         factory(App\User::class, 15)->create([
-            'discord_channel' => $discord_channel,])->each(function ($user) {
-            $user->projects()->saveMany(factory(App\Project::class, rand(2, 4))->make([
-                        'user_id' => $user->id,]));
-        });
+            'discord_channel' => $discord_channel,]);
 
-        // Create 5 super users and a few projects for each.
+        // create 5 superuser accounts
         factory(App\User::class, 'superuser', 5)->create([
-            'discord_channel' => $discord_channel,])->each(function ($user) {
-            $user->projects()->saveMany(factory(App\Project::class, rand(2, 4))->make([
-                        'user_id' => $user->id,]));
-        });
+            'discord_channel' => $discord_channel,]);
 
-        // Create 5 deactivated users and a few projects for each.
+        // create 5 deactivated user accounts
         factory(App\User::class, 'inactive', 5)->create([
-            'discord_channel' => $discord_channel,])->each(function ($user) {
-            $user->projects()->saveMany(factory(App\Project::class, rand(2, 4))->make([
-                        'user_id' => $user->id,]));
-        });
+            'discord_channel' => $discord_channel,]);
     }
 
 }

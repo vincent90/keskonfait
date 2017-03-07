@@ -15,7 +15,15 @@ class User extends Authenticatable {
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'phone_number', 'user_image', 'discord_user', 'discord_channel', 'email', 'superuser', 'active',
+        'first_name',
+        'last_name',
+        'phone_number',
+        'user_image',
+        'discord_user',
+        'discord_channel',
+        'email',
+        'superuser',
+        'active',
     ];
 
     /**

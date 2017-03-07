@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model {
 
+    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id'];
+
     use \Venturecraft\Revisionable\RevisionableTrait;
 
-    protected $fillable = ['name', 'description', 'start_at', 'end_at', 'user_id'];
     protected $revisionCreationsEnabled = true;
 
     /**

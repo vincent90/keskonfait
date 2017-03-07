@@ -69,56 +69,10 @@
             </div>
         </div>
 
-        @if (count($myprojects) > 0)
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Projects I manage
-            </div>
-            <div class="panel-body">
-                <table class="table table-striped">
-                    <thead>
-                    <th style="width:70%">Project name</th>
-                    <th style="width:10%">Start at</th>
-                    <th style="width:10%">End at</th>
-                    <th style="width:5%">&nbsp;</th>
-                    <th style="width:5%">&nbsp;</th>
-                    </thead>
-                    <tbody>
-                        @foreach ($myprojects as $project)
-                        <tr>
-                            <td>
-                                <a href="{{ route('projects.show', ['id' => $project->id]) }}">{{ $project->name }}</a>
-                            </td>
-                            <td>
-                                {{$project->start_at}}
-                            </td>
-                            <td>
-                                {{$project->end_at}}
-                            </td>
-                            <td>
-                                <form action="/projects/{{ $project->id }}/edit" method="GET">
-                                    <button type="submit" class="btn btn-default">Edit</button>
-                                </form>
-                            </td>
-                            <td>
-                                <form action="/projects/{{ $project->id }}" method="POST">
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="{{ $project->name }}" data-target="#confirm-delete">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        @endif
-
         @if (count($projects) > 0)
         <div class="panel panel-default">
             <div class="panel-heading">
-                All my projects
+                My projects
             </div>
             <div class="panel-body">
                 <table class="table table-striped">

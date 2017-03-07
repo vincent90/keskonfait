@@ -62,7 +62,7 @@ echo json_encode([
                                 </ul>
                             </li>
                             @endif
-                            <li><a href="{{ url('/tasks') }}">My Tasks</a></li>
+                            <li><a href="{{ url('/tasks') }}">My tasks</a></li>
                             <li><a href="{{ url('/projects') }}">My projects</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -77,7 +77,7 @@ echo json_encode([
                                         <a href="{{ url('/users/' . Auth::id()) }}">My profile</a>
                                     </li>
                                     <li>
-                                        <a href="{{ url('/users/' . Auth::id() . '/edit_password') }}">Edit my password</a>
+                                        <a href="{{ url('/users/' . Auth::id() . '/edit_password') }}">Update my password</a>
                                     </li>
                                     <li>
                                         <a href="{{ url('/logout') }}"

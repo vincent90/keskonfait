@@ -52,6 +52,8 @@
                     {{ method_field('DELETE') }}
                     <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-item-to-delete="{{ $user->fullName() }}" data-target="#confirm-delete">Delete</button>
                 </form>
+                @endif
+                @if (Auth::user()->superuser || Auth::user()->id == $user->id)
                 <form action="/users/{{ $user->id }}/edit" method="GET">
                     <button type="submit" class="btn btn-default">Edit</button>
                 </form>

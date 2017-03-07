@@ -108,12 +108,13 @@ return [
       | Notification Configuration
       |--------------------------------------------------------------------------
       |
-      | Here you may configure the notification settings for your application.
-      | discord_channel_for_seeds is used by the User table seeder.
+      | Here you may configure the log settings for your application
+      | notification settings.
       |
      */
-    'discord_channel_for_seeds' => env('DISCORD_CHANNEL_FOR_SEEDS', ''),
     'enable_notifications' => env('ENABLE_NOTIFICATIONS', false),
+    'discord_channel_for_seeded_users' => env('DISCORD_CHANNEL_FOR_SEEDED_USERS', ''),
+    'discord_user_for_seeded_user_anthony' => env('DISCORD_USER_FOR_SEEDED_USER_ANTHONY', ''),
     /*
       |--------------------------------------------------------------------------
       | Autoloaded Service Providers

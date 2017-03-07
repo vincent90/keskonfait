@@ -15,14 +15,19 @@ class TaskAssignedNotification extends Notification implements ShouldQueue {
     use Queueable;
 
     public $task;
+    public $originalUser;
+    public $isNew;
 
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param Task $task
+     * @param type $originalUser
      */
-    public function __construct(Task $task) {
+    public function __construct(Task $task, $originalUser, $isNew) {
         $this->task = $task;
+        $this->originalUser = $originalUser;
+        $this->isNew = $isNew;
     }
 
     /**
@@ -32,7 +37,10 @@ class TaskAssignedNotification extends Notification implements ShouldQueue {
      * @return array
      */
     public function via($notifiable) {
-        return [DiscordChannel::class, 'mail'];
+        if (!empty($this->task->user->discord_channel)) {
+            return [DiscordChannel::class, 'mail'];
+        } else
+            return ['mail'];
     }
 
     /**
@@ -45,8 +53,10 @@ class TaskAssignedNotification extends Notification implements ShouldQueue {
         $url = route('tasks.show', ['id' => $this->task->id]);
 
         return (new MailMessage)
-                        ->line('You been assigned to the task : ' . $this->task->name)
-                        ->action('Show me!', $url)
+                        ->subject('New Task Assignment')
+                        ->greeting('Hello! Your team needs your help with the following task :')
+                        ->line($this->task->name)
+                        ->action('Show me', $url)
                         ->line('Thank you for using our application!');
     }
 
@@ -72,13 +82,19 @@ class TaskAssignedNotification extends Notification implements ShouldQueue {
         $url = route('tasks.show', ['id' => $this->task->id]);
         $discord_channel = $this->task->user->discord_channel;
         $discord_user = $this->task->user->discord_user;
-        $taskName = $this->task->name;
-        $userFullName = $this->task->user->fullName();
 
-        if (!empty($discord_channel) && !empty($discord_user)) {
-            $msg = '<@' . $discord_user . '> has been assigned to the task : **' . $taskName . '** -> Link : ' . $url;
-        } else if (!empty($discord_channel)) {
-            $msg = $userFullName . ' has been assigned to the task : **' . $taskName . '** -> Link : ' . $url;
+        if ($discord_user != null) {
+            $user = '<@' . $discord_user . '>';
+        } else {
+            $user = $this->task->user->fullName();
+        }
+
+        if ($this->isNew) {
+            $msg = $user . ' has been assigned to the task : **' . $this->task->name . '** ' . $url;
+        } else {
+            if ($this->originalUser != null) {
+                $msg = '**' . $this->task->name . '** ' . $url . ' has been reassigned to ' . $user;
+            }
         }
 
         return DiscordMessage::create($msg);

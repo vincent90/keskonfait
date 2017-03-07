@@ -21,7 +21,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'phone_number' => $faker->phoneNumber,
-        'user_image' => rand(1, 12) . '.jpg',
+        'user_image' => 'default/' . rand(1, 20) . '.jpg',
         'email' => $faker->unique()->safeEmail,
         'superuser' => false,
         'active' => true,
@@ -51,7 +51,7 @@ $factory->defineAs(App\User::class, 'inactive', function (Faker\Generator $faker
  */
 $factory->define(App\Project::class, function (Faker\Generator $faker) {
     $start_at = (new Carbon())->addDays(rand(0, 30));
-    $end_at = $start_at->copy()->addDays(rand(60, 80));
+    $end_at = $start_at->copy()->addDays(rand(60, 90));
 
     return [
         'name' => $faker->sentence(rand(5, 15)),

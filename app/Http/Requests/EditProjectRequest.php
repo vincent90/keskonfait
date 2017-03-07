@@ -71,6 +71,7 @@ class EditProjectRequest extends FormRequest {
             }
             array_push($users, Auth::id()); // Automatically add the authenticated user.
 
+            $project = $this->route('project');
             foreach ($project->tasks as $task) {
                 if (in_array($task->user_id, $users) == 0) {
                     $validator->errors()->add('users', 'Impossible to remove a user (' . User::findorfail($task->user_id)->fullName() . ') who have been assigned to a task.');
