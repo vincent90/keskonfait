@@ -22,19 +22,16 @@ class AuthTest extends TestCase {
             'user_image' => '1.jpg',
             'email' => 'boba@fett.com',
             'superuser' => true,
-            'password' => bcrypt($this->password),
+            'password' => bcrypt('123456'),
         ]);
     }
 
     /** @test */
-    public function a_user_can_successfully_log_in()
-    {
-        $email = 'meweddolinn-0408@yopmail.com';
-        $password = '123456';
-
+    public function a_user_can_successfully_log_in() {
+        $this->get_user();
         $this->visit(route('login'));
-        $this->type($email, 'email');
-        $this->type($password, 'password');
+        $this->type('boba@fett.com', 'email');
+        $this->type('123456', 'password');
         $this->press('Login');
         $this->seePageIs('/projects');
     }
@@ -57,8 +54,7 @@ class AuthTest extends TestCase {
     }
 
     /** @test */
-    public function check_tasks_for_a_new_user()
-    {
+    public function check_tasks_for_a_new_user() {
         $this->get_user();
         $this->actingAs($this->user);
         $this->visit('/tasks');

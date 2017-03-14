@@ -5,17 +5,15 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Response;
 
-
-class ProjectTest extends TestCase
-{
+class ProjectTest extends TestCase {
 
     use DatabaseTransactions;
 
     protected $user;
 
-    public function get_user()
-    {
-        if ($this->user) return;
+    public function get_user() {
+        if ($this->user)
+            return;
 
         $this->user = factory(App\User::class)->create([
             'first_name' => 'Bob',
@@ -29,8 +27,7 @@ class ProjectTest extends TestCase
     }
 
     /** @test */
-    public function create_project()
-    {
+    public function create_project() {
         $this->get_user();
         $this->actingAs($this->user);
         $this->visit('/projects');
@@ -39,7 +36,8 @@ class ProjectTest extends TestCase
         $this->type('2017-05-25', 'start_at');
         $this->type('2017-07-25', 'end_at');
         $this->select([4, 1], 'users[]');
-        $this->press('Add project');
+        $this->press('Create project');
         $this->see('testProject');
     }
+
 }
