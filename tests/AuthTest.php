@@ -10,7 +10,6 @@ class AuthTest extends TestCase {
     use DatabaseTransactions;
 
     protected $user;
-    protected $password = '123456';
 
     public function get_user() {
         if ($this->user)
@@ -28,11 +27,14 @@ class AuthTest extends TestCase {
     }
 
     /** @test */
-    public function a_user_can_successfully_log_in() {
-        $this->get_user();
+    public function a_user_can_successfully_log_in()
+    {
+        $email = 'meweddolinn-0408@yopmail.com';
+        $password = '123456';
+
         $this->visit(route('login'));
-        $this->type($this->user->email, 'email');
-        $this->type($this->password, 'password');
+        $this->type($email, 'email');
+        $this->type($password, 'password');
         $this->press('Login');
         $this->seePageIs('/projects');
     }
@@ -52,6 +54,15 @@ class AuthTest extends TestCase {
         $this->actingAs($this->user);
         $this->visit(route('login'));
         $this->seePageIs('/projects');
+    }
+
+    /** @test */
+    public function check_tasks_for_a_new_user()
+    {
+        $this->get_user();
+        $this->actingAs($this->user);
+        $this->visit('/tasks');
+        $this->see('Move Along, Nothing to See Here!');
     }
 
 }
