@@ -5,10 +5,10 @@ php:
 
 before_script:
   - cp .env.testing .env
-  - mysql -e 'CREATE USER 'homestead'@'localhost' IDENTIFIED BY 'secret';'
-  - mysql -e 'CREATE DATABASE homestead;'
-  - mysql -e 'GRANT ALL PRIVILEGES ON homestead.* TO ‘homestead’@'localhost’;'
-  - mysql -e 'FLUSH PRIVILEGES;'
+  - mysql -e "CREATE USER 'homestead'@'localhost' IDENTIFIED BY 'secret';"
+  - mysql -e "CREATE DATABASE homestead;"
+  - mysql -e "GRANT ALL PRIVILEGES ON homestead.* TO ‘homestead’@'localhost’;"
+  - mysql -e "FLUSH PRIVILEGES;"
   - composer self-update
   - composer install --no-interaction
 
