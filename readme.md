@@ -2,6 +2,8 @@
 
 ## Projet keskonfait
 
+[![Build Status](https://travis-ci.org/vincent90/keskonfait.svg?branch=master)](https://travis-ci.org/vincent90/keskonfait)
+
 ### Setup local de Laravel
 
 Dépendances: docker, docker-compose, Git, Vagrant, Homestead, Virtualbox, vim
