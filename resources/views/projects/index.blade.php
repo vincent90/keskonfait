@@ -86,7 +86,7 @@
                         @foreach ($projects as $project)
                         <tr>
                             <td>
-                                <a href="{{ route('projects.show', ['id' => $project->id]) }}">{{ $project->name }}</a>
+                                    <a id="project{{ $project->id }}" href="{{ route('projects.show', ['id' => $project->id]) }}">{{ $project->name }}</a>
                             </td>
                             <td>
                                 {{$project->start_at}}

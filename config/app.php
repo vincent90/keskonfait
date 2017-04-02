@@ -21,7 +21,7 @@ return [
       | services your application utilizes. Set this in your ".env" file.
       |
      */
-    'env' => env('APP_ENV', 'production'),
+    'env' => env('APP_ENV', 'testing'),
     /*
       |--------------------------------------------------------------------------
       | Application Debug Mode

@@ -20,6 +20,7 @@ class UsersTableSeeder extends Seeder {
             'discord_user' => $discord_user_anthony,
             'discord_channel' => $discord_channel,
             'email' => 'anthony.martin-coallier.1@etsmtl.net',
+            'password' => bcrypt('secret')
         ]);
 
         // create 15 normal user accounts

@@ -1,13 +1,11 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\Response;
 
 class AuthTest extends TestCase {
 
     use DatabaseTransactions;
+//    use WithoutMiddleware;
 
     protected $user;
 
@@ -51,14 +49,6 @@ class AuthTest extends TestCase {
         $this->actingAs($this->user);
         $this->visit(route('login'));
         $this->seePageIs('/projects');
-    }
-
-    /** @test */
-    public function check_tasks_for_a_new_user() {
-        $this->get_user();
-        $this->actingAs($this->user);
-        $this->visit('/tasks');
-        $this->see('Move Along, Nothing to See Here!');
     }
 
 }

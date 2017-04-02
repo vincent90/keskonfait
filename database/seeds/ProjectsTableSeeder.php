@@ -29,7 +29,8 @@ class ProjectsTableSeeder extends Seeder {
                 $end_at = $start_at->copy()->addDays(rand(60, 80));
 
                 $project = Project::create([
-                            'name' => $faker->sentence(rand(5, 15)),
+//                            'name' => $faker->sentence(rand(5, 15)),
+                            'name' => $faker->word(str_random(10)),
                             'description' => $faker->sentence(rand(0, 100)),
                             'start_at' => $start_at->toDateString(),
                             'end_at' => $end_at->toDateString(),
