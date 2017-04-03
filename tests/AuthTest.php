@@ -51,4 +51,19 @@ class AuthTest extends TestCase {
         $this->seePageIs('/projects');
     }
 
+    /** @test */
+    public function a_user_can_change_his_password() {
+        $this->get_user();
+        $this->actingAs($this->user);
+        $this->visit("/projects");
+        $this->click('Update my password');
+        $this->seePageIs("/users/{$this->user->id}/edit_password");
+        $this->type('123456','old_password');
+        $this->type('123456','password');
+        $this->type('123456','password_confirmation');
+        $this->press("Save new password");
+        $this->seePageIs("/users/{$this->user->id}/");
+        $this->see('Your password has been updated successfully!');
+    }
+
 }

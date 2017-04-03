@@ -90,24 +90,24 @@ class ProjectAndTaskTest extends TestCase {
 //    }
 
 
-    /** @test */
-    public function create_task_for_a_project()
-    {
-        $user = DB::table('users')->where('first_name', 'Anthony')->first();
-        var_dump($user->id);
-        $project = DB::table('projects')->where('user_id', $user->id)->first();
-        var_dump($project);
-        $this->visit(route('login'));
-        $this->type($user->email, 'email');
-        $this->type('secret', 'password');
-        $this->press('Login');
-        $this->seePageIs('/projects');
-        $this->visit("/projects/{$project->id}");
+//    /** @test */
+//    public function create_task_for_a_project()
+//    {
+//        $user = DB::table('users')->where('first_name', 'Anthony')->first();
+//        var_dump($user->id);
+//        $project = DB::table('projects')->where('user_id', $user->id)->first();
+//        var_dump($project);
+//        $this->visit(route('login'));
+//        $this->type($user->email, 'email');
+//        $this->type('secret', 'password');
+//        $this->press('Login');
+//        $this->seePageIs('/projects');
+//        $this->visit("/projects/{$project->id}");
 //        $this->click('quaerat');
 //        $this->visit("/projects/{$project->id}");
 //        $this->seePageIs('/projects');
 //        $this->see($project->name);
-    }
+//    }
 
 
 //    /** @test */
