@@ -33,7 +33,10 @@ class ProjectAndTaskTest extends TestCase {
         $this->see('Move Along, Nothing to See Here!');
     }
 
-    /** @test */
+    /**
+     * @test
+     * CT11 – Empêcher la creation d’un projet s'il manque des information critique au projet
+     */
     public function do_not_create_a_project_if_needed_field_is_missing()
     {
         $this->get_user();
@@ -47,7 +50,10 @@ class ProjectAndTaskTest extends TestCase {
         $this->see('The end at field is required.');
     }
 
-    /** @test */
+    /**
+     * @test
+     * CT10 – Création d’un projet
+     */
     public function create_project()
     {
         $this->user2 = factory(App\User::class)->create();
@@ -65,6 +71,31 @@ class ProjectAndTaskTest extends TestCase {
         $this->visit('/projects');
         $this->see('testProject');
         $this->see($this->user2->last_name);
+    }
+
+    /**
+     * @test
+     * CT14 – Historique des changements
+     */
+    public function check_changes_history()
+    {
+        $user = DB::table('users')->where('first_name', 'Anthony')->first();
+        $project = DB::table('projects')->where('user_id', $user->id)->first();
+        $this->visit(route('login'));
+        $this->type($user->email, 'email');
+        $this->type('secret', 'password');
+        $this->press('Login');
+        $this->seePageIs('/projects');
+        $this->visit("/projects/{$project->id}/edit?");
+        $this->type("{$project->name}12345", 'name');
+        $this->press('Save changes');
+        $this->see("projects/{$project->id}");
+        $this->see('Project has been edited successfully!');
+        $this->see("{$user->first_name} {$user->last_name}");
+        $this->see('changed name from');
+        $this->see("{$project->name}");
+        $this->see("to");
+        $this->see("{$project->name}12345");
     }
 
 //    /** @test */

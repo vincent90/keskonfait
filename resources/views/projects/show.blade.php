@@ -83,7 +83,7 @@
                             <select class="form-control" name="task_id" id="task_id">
                                 <option value="-1" @if (old('task_id') == '-1') selected="selected" @endif></option>
                                 @if ($project->tasks->count() > 0)
-                                @php foreach($project->tasks()->orderBy('start_at','asc')->orderBy('end_at','asc')->get() as $task) renderSelectOptions($task, 0); @endphp
+                                {{--@php foreach($project->tasks()->orderBy('start_at','asc')->orderBy('end_at','asc')->get() as $task) renderSelectOptions($task, 0); @endphp--}}
                                 @endif
                             </select>
                         </div>
@@ -163,7 +163,7 @@
                     <th style="width:5%">&nbsp;</th>
                     </thead>
                     <tbody>
-                        @php foreach($project->tasks()->orderBy('start_at','asc')->orderBy('end_at', 'asc')->get() as $task) renderTask($task, 0); @endphp
+{{--                        @php foreach($project->tasks()->orderBy('start_at','asc')->orderBy('end_at', 'asc')->get() as $task) renderTask($task, 0); @endphp--}}
                     </tbody>
                 </table>
             </div>
@@ -174,110 +174,110 @@
     </div>
 </div>
 
-@php
-    function renderSelectOptions($task, $i) {
-        $prefix = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $i);
-        if($task->id == old('task_id')){
-            echo '<option value="' . $task->id . '" selected="">' . $prefix . $task->name . '</option>';
-        } else {
-            echo '<option value="' . $task->id . '">' . $prefix . $task->name . '</option>';
-        }
-        if ( $task->children()->count() > 0 ) {
-            foreach($task->children()->orderBy('start_at','asc')->get() as $subTask) {
+{{--@php--}}
+    {{--function renderSelectOptions($task, $i) {--}}
+        {{--$prefix = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $i);--}}
+        {{--if($task->id == old('task_id')){--}}
+            {{--echo '<option value="' . $task->id . '" selected="">' . $prefix . $task->name . '</option>';--}}
+        {{--} else {--}}
+            {{--echo '<option value="' . $task->id . '">' . $prefix . $task->name . '</option>';--}}
+        {{--}--}}
+        {{--if ( $task->children()->count() > 0 ) {--}}
+            {{--foreach($task->children()->orderBy('start_at','asc')->get() as $subTask) {--}}
 
-                $prefix = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', ++$i);
-                if($subTask->id == old('task_id')){
-                    echo '<option value="' . $subTask->id . '" selected="">' . $prefix . $subTask->name . '</option>';
-                } else {
-                    echo '<option value="' . $subTask->id . '">' . $prefix . $subTask->name . '</option>';
-                }
-            }
-        }
-    }
+                {{--$prefix = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', ++$i);--}}
+                {{--if($subTask->id == old('task_id')){--}}
+                    {{--echo '<option value="' . $subTask->id . '" selected="">' . $prefix . $subTask->name . '</option>';--}}
+                {{--} else {--}}
+                    {{--echo '<option value="' . $subTask->id . '">' . $prefix . $subTask->name . '</option>';--}}
+                {{--}--}}
+            {{--}--}}
+        {{--}--}}
+    {{--}--}}
 
-    function renderTask($task, $i) {
-        $prefix = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $i);
-        echo '<tr>';
-            echo '<td>';
-                echo '<a href="/tasks/' . $task->id . '">' . $prefix . $task->name . '</a>';
-                echo '</td>';
-            echo '<td>';
-                echo $task->start_at;
-                echo '</td>';
-            echo '<td>';
-                echo $task->end_at;
-                echo '</td>';
-            echo '<td>';
-                if($task->user->active) {
-                echo '<a href="' . route('users.show', ['id' => $task->user->id]) . '">' . $task->user->fullName() . '</a>';
-                }   else {
-                echo '<del><a href="' . route('users.show', ['id' => $task->user->id]) . '">' . $task->user->fullName() . '</a></del>';
-                }
-                echo '</td>';
-            echo '<td>';
-                echo $task->status;
-                echo '</td>';
-            echo '<td>';
-                if ($task->canEdit(Auth::user())) {
-                echo '<form action="/tasks/' . $task->id . '/edit" method="GET">';
-                    echo '<button type="submit" class="btn btn-default">Edit</button>';
-                    echo '</form>';
-                }
-                echo '</td>';
-            echo '<td>';
-                if ($task->canDestroy(Auth::user())) {
-                echo '<form action="/tasks/' . $task->id . '" method="POST">';
-                    echo csrf_field();
-                    echo method_field('DELETE');
-                    echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="' . $task->name . '" data-target="#confirm-delete">Delete</button>';
-                    echo '</form>';
-                }
-                echo '</td>';
-            echo '</tr>';
-        if ( $task->children()->count() > 0 ) {
-        foreach($task->children()->orderBy('start_at','asc')->get() as $t){
-            $prefix = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', ++$i);
+    {{--function renderTask($task, $i) {--}}
+        {{--$prefix = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $i);--}}
+        {{--echo '<tr>';--}}
+            {{--echo '<td>';--}}
+                {{--echo '<a href="/tasks/' . $task->id . '">' . $prefix . $task->name . '</a>';--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--echo $task->start_at;--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--echo $task->end_at;--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--if($task->user->active) {--}}
+                {{--echo '<a href="' . route('users.show', ['id' => $task->user->id]) . '">' . $task->user->fullName() . '</a>';--}}
+                {{--}   else {--}}
+                {{--echo '<del><a href="' . route('users.show', ['id' => $task->user->id]) . '">' . $task->user->fullName() . '</a></del>';--}}
+                {{--}--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--echo $task->status;--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--if ($task->canEdit(Auth::user())) {--}}
+                {{--echo '<form action="/tasks/' . $task->id . '/edit" method="GET">';--}}
+                    {{--echo '<button type="submit" class="btn btn-default">Edit</button>';--}}
+                    {{--echo '</form>';--}}
+                {{--}--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--if ($task->canDestroy(Auth::user())) {--}}
+                {{--echo '<form action="/tasks/' . $task->id . '" method="POST">';--}}
+                    {{--echo csrf_field();--}}
+                    {{--echo method_field('DELETE');--}}
+                    {{--echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="' . $task->name . '" data-target="#confirm-delete">Delete</button>';--}}
+                    {{--echo '</form>';--}}
+                {{--}--}}
+                {{--echo '</td>';--}}
+            {{--echo '</tr>';--}}
+        {{--if ( $task->children()->count() > 0 ) {--}}
+        {{--foreach($task->children()->orderBy('start_at','asc')->get() as $t){--}}
+            {{--$prefix = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', ++$i);--}}
 
-                echo '<tr>';
-            echo '<td>';
-                echo '<a href="/tasks/' . $t->id . '">' . $prefix . $t->name . '</a>';
-                echo '</td>';
-            echo '<td>';
-                echo $t->start_at;
-                echo '</td>';
-            echo '<td>';
-                echo $t->end_at;
-                echo '</td>';
-            echo '<td>';
-                if($t->user->active) {
-                echo '<a href="' . route('users.show', ['id' => $t->user->id]) . '">' . $t->user->fullName() . '</a>';
-                }   else {
-                echo '<del><a href="' . route('users.show', ['id' => $t->user->id]) . '">' . $t->user->fullName() . '</a></del>';
-                }
-                echo '</td>';
-            echo '<td>';
-                echo $t->status;
-                echo '</td>';
-            echo '<td>';
-                if ($t->canEdit(Auth::user())) {
-                echo '<form action="/tasks/' . $t->id . '/edit" method="GET">';
-                    echo '<button type="submit" class="btn btn-default">Edit</button>';
-                    echo '</form>';
-                }
-                echo '</td>';
-            echo '<td>';
-                if ($t->canDestroy(Auth::user())) {
-                echo '<form action="/tasks/' . $t->id . '" method="POST">';
-                    echo csrf_field();
-                    echo method_field('DELETE');
-                    echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="' . $t->name . '" data-target="#confirm-delete">Delete</button>';
-                    echo '</form>';
-                }
-                echo '</td>';
-            echo '</tr>';
-        }
-        }
-    }
+                {{--echo '<tr>';--}}
+            {{--echo '<td>';--}}
+                {{--echo '<a href="/tasks/' . $t->id . '">' . $prefix . $t->name . '</a>';--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--echo $t->start_at;--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--echo $t->end_at;--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--if($t->user->active) {--}}
+                {{--echo '<a href="' . route('users.show', ['id' => $t->user->id]) . '">' . $t->user->fullName() . '</a>';--}}
+                {{--}   else {--}}
+                {{--echo '<del><a href="' . route('users.show', ['id' => $t->user->id]) . '">' . $t->user->fullName() . '</a></del>';--}}
+                {{--}--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--echo $t->status;--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--if ($t->canEdit(Auth::user())) {--}}
+                {{--echo '<form action="/tasks/' . $t->id . '/edit" method="GET">';--}}
+                    {{--echo '<button type="submit" class="btn btn-default">Edit</button>';--}}
+                    {{--echo '</form>';--}}
+                {{--}--}}
+                {{--echo '</td>';--}}
+            {{--echo '<td>';--}}
+                {{--if ($t->canDestroy(Auth::user())) {--}}
+                {{--echo '<form action="/tasks/' . $t->id . '" method="POST">';--}}
+                    {{--echo csrf_field();--}}
+                    {{--echo method_field('DELETE');--}}
+                    {{--echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-item-to-delete="' . $t->name . '" data-target="#confirm-delete">Delete</button>';--}}
+                    {{--echo '</form>';--}}
+                {{--}--}}
+                {{--echo '</td>';--}}
+            {{--echo '</tr>';--}}
+        {{--}--}}
+        {{--}--}}
+    {{--}--}}
 
-@endphp
+{{--@endphp--}}
 @endsection

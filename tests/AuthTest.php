@@ -5,7 +5,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class AuthTest extends TestCase {
 
     use DatabaseTransactions;
-//    use WithoutMiddleware;
 
     protected $user;
 
@@ -24,7 +23,10 @@ class AuthTest extends TestCase {
         ]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * CT6 – S’assurer que la connexion d’un usager se fait sans problème
+     */
     public function a_user_can_successfully_log_in() {
         $this->get_user();
         $this->visit(route('login'));
@@ -34,7 +36,10 @@ class AuthTest extends TestCase {
         $this->seePageIs('/projects');
     }
 
-    /** @test */
+    /**
+     * @test
+     * CT8 – S’assurer qu’un mauvais mot de passe empêche la connexion
+     */
     public function a_user_receives_errors_for_wrong_login_credentials() {
         $this->visit(route('login'));
         $this->type('shreder@ninjaturtles.com', 'email');
@@ -43,7 +48,10 @@ class AuthTest extends TestCase {
         $this->see('These credentials do not match our records.');
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     */
     public function a_user_is_redirected_to_dashboard_if_logged_in_and_tries_to_access_login_page() {
         $this->get_user();
         $this->actingAs($this->user);
@@ -51,7 +59,10 @@ class AuthTest extends TestCase {
         $this->seePageIs('/projects');
     }
 
-    /** @test */
+    /**
+     * @test
+     * CT7 – S’assurer que l’utilisateur peut changer son mot de passe en cas d’oublie
+     */
     public function a_user_can_change_his_password() {
         $this->get_user();
         $this->actingAs($this->user);
