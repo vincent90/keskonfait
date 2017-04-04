@@ -34,7 +34,7 @@ $ docker-compose up -d nginx mysql
 2. Installer [Vagrant](https://www.vagrantup.com/downloads.html) pour votre système d'exploitation.
 Une fois installé, lancer la commande suivante:
 ~~~
-$ vagrant box add laravel/homestead https://atlas.hashicorp.com/laravel/boxes/homestead
+$ vagrant box add laravel/homestead --box-version 1.1.0
 ~~~
 
 3. Par la suite, il faut installer et configurer Homestead. Pour Windows, je ne peux pas tester alors je vous laisse ce lien là [Install Homestead on Windows](http://blog.teamtreehouse.com/laravel-homestead-on-windows), mais ça devrait être assez straight forward.
