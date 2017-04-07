@@ -1,5 +1,3 @@
-# LOG515
-
 ## Projet keskonfait
 
 [![Build Status](https://travis-ci.org/vincent90/keskonfait.svg?branch=master)](https://travis-ci.org/vincent90/keskonfait)
